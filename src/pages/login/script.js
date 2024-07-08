@@ -9,6 +9,8 @@ const auth = authentication.getAuth()
 btnLogin.addEventListener('click', signIn)
 
 async function signIn(){
+    console.log(email)
+
     await authentication.signInWithEmailAndPassword(auth, email, password)
         .then((userCredential)=>{
             alert('Logado com sucesso!!')
@@ -29,6 +31,8 @@ function handleAuthError(error){
             case 'auth/invalid-credential':
                 showError("Email ou senha errados!")
                 break;
+            case 'auth/invalid-email':
+                showError('Email inválido!!')
             default:
                 break;
         }
