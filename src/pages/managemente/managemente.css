@@ -30,16 +30,28 @@ header{
 
 main{
     width: 100%;
-    height: 100%;
+    height: 100vh;
 }
 
 #containerKeyboard{
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+
+    position: relative;
+
+    transition: .5s;
 
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.keyboardActive{
+    left: 0;
+}
+
+.keyboardInactive{
+    left: -100%;
 }
 
 #value{
@@ -98,6 +110,8 @@ main{
 
     margin-top: 35px;
     padding: 5px 10px;
+
+    color: #a1a1a1;
     
     border: none;
     border-radius: 5px;
@@ -108,16 +122,8 @@ main{
 }
 
 #btnNext:hover{
-    color: black;
-}
-
-.btnNextInactive{
-    background-color: #e9e9e9;
-    color: #a1a1a1;
-}
-
-.btnNextActive{
-    color: black;
+    background-color: black;
+    color: white;
 }
 
 footer{

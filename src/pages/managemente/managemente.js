@@ -9,22 +9,34 @@ const btnSectionMenu = document.querySelector('#btnSectionMenu')
 btnSectionKeyboard.addEventListener('click',()=>{
     let state = currentSection == 'left'
     let bar = document.querySelector('#barFooterSection')
+    let keyboard = document.querySelector('#containerKeyboard')
 
     if(!state){
         currentSection = 'left'
-        bar.classList = 'footerSectionLeft'
+        slideRight(bar, '0%')
+        slideRight(keyboard, '0%')
     }
 })
 
 btnSectionMenu.addEventListener('click',()=>{
     let state = currentSection == 'left'
     let bar = document.querySelector('#barFooterSection')
+    let keyboard = document.querySelector('#containerKeyboard')
 
     if(state){
         currentSection = 'right'
-        bar.classList = 'footerSectionRight'
+        slideRight(bar, '50%')
+        slideRight(keyboard, '-100%')
     }
 })
+
+function slideLeft(element, porcent){
+    element.style.left = porcent
+}
+
+function slideRight(element, porcent){
+    element.style.left = porcent
+}
 
 function showElement(element){
     element.style.display = 'block'
