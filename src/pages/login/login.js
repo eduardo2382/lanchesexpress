@@ -1,18 +1,20 @@
 import { authentication } from '../../../configs/firebaseConfig.js'
 
-const email = document.querySelector('[name=loginEmail]')
-const password = document.querySelector('[name=loginPassword')
-const btnLogin = document.querySelector('#btnLogin')
-
 const auth = authentication.getAuth()
+
+const btnLogin = document.querySelector('#btnLogin')
 
 btnLogin.addEventListener('click', signIn)
 
 async function signIn(){
-    console.log(email.value)
+    let email = document.querySelector('[name=loginEmail]').value
+    let password = document.querySelector('[name=loginPassword').value
+    
+
+    console.log(email)
     console.log(typeof email)
 
-    await authentication.signInWithEmailAndPassword(auth, email.value, password.value)
+    await authentication.signInWithEmailAndPassword(auth, email, password)
         .then((userCredential)=>{
             alert('Logado com sucesso!!')
             window.location.href = '../../../index.html'
