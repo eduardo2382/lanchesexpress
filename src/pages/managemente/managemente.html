@@ -6,17 +6,47 @@
     <title>Lanches Express - Gerenciamento</title>
     <link rel="stylesheet" href="../../../global.css">
     <link rel="stylesheet" href="managemente.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet"/>
 </head>
 <body>
     <header>
         <nav>
-            <button id="btnMenu"></button>
+            <button id="btnMenu">
+                <i class="ri-menu-line"></i>
+            </button>
         </nav>
     </header>
 
-    <main></main>
+    <main>
+        <div id="containerKeyboard">
+            <div id="value">
+                <span>R$</span>
+                <span>0,00</span>
+            </div>
+            <div id="keyboard">
+                <button class="btnKeyboard">1</button>
+                <button class="btnKeyboard">2</button>
+                <button class="btnKeyboard">3</button>
+                <button class="btnKeyboard">4</button>
+                <button class="btnKeyboard">5</button>
+                <button class="btnKeyboard">6</button>
+                <button class="btnKeyboard">7</button>
+                <button class="btnKeyboard">8</button>
+                <button class="btnKeyboard">9</button>
+                <button class="btnKeyboard">0</button>
+                <button class="btnKeyboard">
+                    <i class="ri-delete-back-2-fill"></i>
+                </button>
+            </div>
+            <button id="btnNext" class="btnNextInactive">Continuar</button>
+        </div>
+    </main>
 
-    <footer></footer>
+    <footer>
+        <button id="btnSectionKeyboard" class="btnFooter">Teclado</button>
+        <button id="btnSectionMenu" class="btnFooter">Cardapio</button>
+        <div id="barFooterSection" class="footerSectionLeft"></div>
+    </footer>
 
     <script type="module" src="managemente.js"></script>
 </body>
