@@ -1,3 +1,3 @@
 window.onpopstate = () => {
-    window.history.pushState(null, null, window.location.href);
+    window.history.pushState(null, '', window.location.href);
 }
