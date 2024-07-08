@@ -6,17 +6,22 @@ const btnLogin = document.querySelector('#btnLogin')
 
 const auth = authentication.getAuth()
 
-btnLogin.addEventListener('click', ()=>{
-    authentication.signInWithEmailAndPassword(auth, email, password)
+btnLogin.addEventListener('click', signIn)
+
+async function signIn(){
+    await authentication.signInWithEmailAndPassword(auth, email, password)
         .then((userCredential)=>{
+            alert('Logado com sucesso!!')
             window.location.href = '../../../index.html'
         })
         .catch(handleAuthError)
-})
-
+}
 
 function handleAuthError(error){
     if(error.code){
+        console.log(error.code)
+        console.log(error.message)
+
         switch (error.code){
             case 'auth/missing-password':
                 showError("Senha incorreta!")
