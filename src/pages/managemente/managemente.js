@@ -10,11 +10,13 @@ btnSectionKeyboard.addEventListener('click',()=>{
     let state = currentSection == 'left'
     let bar = document.querySelector('#barFooterSection')
     let keyboard = document.querySelector('#containerKeyboard')
+    let menu = document.querySelector('#containerMenu')
 
     if(!state){
         currentSection = 'left'
         slideRight(bar, '0%')
         slideRight(keyboard, '0%')
+        slideRight(menu, '100%')
     }
 })
 
@@ -22,11 +24,13 @@ btnSectionMenu.addEventListener('click',()=>{
     let state = currentSection == 'left'
     let bar = document.querySelector('#barFooterSection')
     let keyboard = document.querySelector('#containerKeyboard')
+    let menu = document.querySelector('#containerMenu')
 
     if(state){
         currentSection = 'right'
         slideRight(bar, '50%')
         slideRight(keyboard, '-100%')
+        slideRight(menu, '0%')
     }
 })
 
