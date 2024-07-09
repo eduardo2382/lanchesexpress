@@ -1,3 +1,5 @@
+import { firestore } from "../../../configs/firebaseConfig.js"
+
 window.onpopstate = () => {
     window.history.pushState(null, '', window.location.href);
 }
@@ -34,6 +36,18 @@ btnSectionMenu.addEventListener('click',()=>{
     }
 })
 
+loadCategories()
+
+function loadCategories(){
+    showElement(document.querySelector('.categoriesList'), 'flex')
+    hideElement(document.querySelector('.subCategories'))
+    hideElement(document.querySelector('.productsList'))
+}
+
+function loadCategory(category){
+
+}
+
 function slideLeft(element, porcent){
     element.style.left = porcent
 }
@@ -42,8 +56,8 @@ function slideRight(element, porcent){
     element.style.left = porcent
 }
 
-function showElement(element){
-    element.style.display = 'block'
+function showElement(element, display='block'){
+    element.style.display = display
 }
 
 function hideElement(element){
