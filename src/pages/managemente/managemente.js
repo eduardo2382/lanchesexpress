@@ -8,6 +8,18 @@ var currentSection = 'left'
 const btnSectionKeyboard = document.querySelector('#btnSectionKeyboard')
 const btnSectionMenu = document.querySelector('#btnSectionMenu')
 
+const btnMenuClose = document.querySelector('#btnMenuClose')
+const btnMenuExpand = document.querySelector('#btnMenuExpand')
+const menu = document.querySelector('#menuNavegation')
+
+btnMenuExpand.addEventListener('click', ()=>{
+    slideElement(menu, 0)
+})
+
+btnMenuClose.addEventListener('click', ()=>{
+    slideElement(menu, '-100%')
+})
+
 btnSectionKeyboard.addEventListener('click',()=>{
     let state = currentSection == 'left'
     let bar = document.querySelector('#barFooterSection')
@@ -16,11 +28,12 @@ btnSectionKeyboard.addEventListener('click',()=>{
 
     if(!state){
         currentSection = 'left'
-        slideRight(bar, '0%')
-        slideRight(keyboard, '0%')
-        slideRight(menu, '100%')
+        slideElement(bar, '0%')
+        slideElement(keyboard, '0%')
+        slideElement(menu, '100%')
     }
 })
+
 
 btnSectionMenu.addEventListener('click',()=>{
     let state = currentSection == 'left'
@@ -30,29 +43,13 @@ btnSectionMenu.addEventListener('click',()=>{
 
     if(state){
         currentSection = 'right'
-        slideRight(bar, '50%')
-        slideRight(keyboard, '-100%')
-        slideRight(menu, '0%')
+        slideElement(bar, '50%')
+        slideElement(keyboard, '-100%')
+        slideElement(menu, '0%')
     }
 })
 
-loadCategories()
-
-function loadCategories(){
-    showElement(document.querySelector('.categoriesList'), 'flex')
-    hideElement(document.querySelector('.subCategories'))
-    hideElement(document.querySelector('.productsList'))
-}
-
-function loadCategory(category){
-
-}
-
-function slideLeft(element, porcent){
-    element.style.left = porcent
-}
-
-function slideRight(element, porcent){
+function slideElement(element, porcent){
     element.style.left = porcent
 }
 
