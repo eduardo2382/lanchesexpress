@@ -13,7 +13,7 @@ const btnMenuExpand = document.querySelector('#btnMenuExpand')
 const menu = document.querySelector('#menuNavegation')
 
 btnMenuExpand.addEventListener('click', ()=>{
-    slideElement(menu, 0)
+    slideElement(menu, '0%')
 })
 
 btnMenuClose.addEventListener('click', ()=>{
