@@ -1,3 +1,42 @@
 body{
     background-color: white;
+
+    overflow: hidden;
 }
+
+main{
+    width: 100vw;
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#btnAddCategory{
+    background-color: black;
+    color: white;
+
+    font-size: 1.4em;
+    font-weight: bold;
+
+    padding: 10px 10px;
+
+    transition: .2s;
+
+    cursor: pointer;
+
+    border: none;
+    border-radius: 5px;
+}
+
+#btnAddCategory{
+    width: 80vw;
+}
+
+#btnAddCategory:hover{
+    color: black;
+    background-color: white;
+}
+
+

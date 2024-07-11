@@ -8,18 +8,6 @@ var currentSection = 'left'
 const btnSectionKeyboard = document.querySelector('#btnSectionKeyboard')
 const btnSectionMenu = document.querySelector('#btnSectionMenu')
 
-const btnMenuClose = document.querySelector('#btnMenuClose')
-const btnMenuExpand = document.querySelector('#btnMenuExpand')
-const menu = document.querySelector('#menuNavegation')
-
-btnMenuExpand.addEventListener('click', ()=>{
-    slideElement(menu, '0%')
-})
-
-btnMenuClose.addEventListener('click', ()=>{
-    slideElement(menu, '-100%')
-})
-
 btnSectionKeyboard.addEventListener('click',()=>{
     let state = currentSection == 'left'
     let bar = document.querySelector('#barFooterSection')
