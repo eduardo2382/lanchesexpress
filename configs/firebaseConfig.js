@@ -14,4 +14,4 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 
-export { firestore, authentication };
+export { firestore, authentication, app};

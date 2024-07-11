@@ -1,6 +1,6 @@
 import { addNewCategory } from './src/pages/products/script.js'
 
-('#btnMenuClose')
+const btnMenuClose = document.querySelector('#btnMenuClose')
 const btnMenuExpand = document.querySelector('#btnMenuExpand')
 const menu = document.querySelector('#menuNavegation')
 
@@ -18,8 +18,6 @@ function slideElement(element, porcent){
 
 class Modal{
     constructor(){
-        this.inputList = []
-
         this.modal = document.createElement('div')
         this.modal.setAttribute('class', 'modal')
 
@@ -29,6 +27,7 @@ class Modal{
 
         this.blackout = document.createElement('div')
         this.blackout.setAttribute('class', 'blackout')
+        this.blackout.addEventListener('click', ()=>{this.hideModal()})
         this.modal.appendChild(this.blackout)
 
         document.body.appendChild(this.modal)
@@ -53,44 +52,19 @@ class Modal{
         input.setAttribute('placeholder', placeholder)
         this.modalContent.appendChild(input)
 
-        this.inputList.push(input)
-
         return input
     }
 
-    newButton(buttonText){
+    newButton(buttonText, buttonId=''){
         let btnModal = document.createElement('input')
         btnModal.setAttribute('type', 'button')
         btnModal.setAttribute('class', 'btnModal')
         btnModal.setAttribute('value', buttonText)
+        btnModal.setAttribute('id', buttonId)
         this.modalContent.appendChild(btnModal)
 
-        btnModal.addEventListener('click', ()=>{
-            let filled = 0
-            this.inputList.forEach((input)=>{
-                if(input.value){
-                    filled++
-                } 
-            })
-
-            if(filled == this.inputList.length){
-                this.hideModal()
-                addNewCategory(this.inputList)
-            } else{
-                alert('Preencha todos os campos!!')
-            }
-        })
-    }
-
-    newCategory(){
-        this.inputList = []
-
-        this.cleanModal()
-        this.newInput('text', 'Nome da Categoria:')
-        this.newButton('Confirmar')
-
-        return category
-    }
+        return btnModal
+    }    
 }
 
 export { Modal } 
