@@ -1,5 +1,3 @@
-import { addNewCategory } from './src/pages/products/script.js'
-
 const btnMenuClose = document.querySelector('#btnMenuClose')
 const btnMenuExpand = document.querySelector('#btnMenuExpand')
 const menu = document.querySelector('#menuNavegation')
