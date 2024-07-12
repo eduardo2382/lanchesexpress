@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanches Express - Categorias</title>
+    <link rel="stylesheet" href="../../../global.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.1.0/fonts/remixicon.css" rel="stylesheet"/>
+</head>
+<body>
+    <header>
+        <nav>
+            <button id="btnMenuExpand">
+                <i class="ri-menu-line"></i>
+            </button>
+            <div id="menuNavegation">
+                <button id="btnMenuClose">
+                    <i class="ri-close-line"></i>
+                </button>
+
+                <h2>Lanches Express</h2>
+
+                <div id="sections">
+                    <a href="../managemente/managemente.html" class="menuSections">
+                        <i class="ri-home-2-fill"></i>
+                        Inicio
+                    </a>
+                    <a href="../category/index.html" class="menuSections">
+                        <i class="ri-price-tag-3-fill"></i>
+                        Produtos
+                    </a>
+                    <a href="../requests/requests.html" class="menuSections">
+                        <i class="ri-receipt-fill"></i>
+                        Pedidos
+                    </a>
+                    <a href="../sales/index.html" class="menuSections">
+                        <i class="ri-shopping-cart-fill"></i>
+                        Vendas
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <input type="button" id="btnAddSubCategory" value="Adicionar Sub-categoria">
+
+        <div id="subCategoriesList">   
+            
+        </div>
+    </main>
+    
+    <script type="module" src="script.js"></script>
+    <script type="module" src="../../../global.js"></script>
+</body>
+</html>

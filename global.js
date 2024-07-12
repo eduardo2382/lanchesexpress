@@ -1,3 +1,7 @@
+import { firestore, app } from './configs/firebaseConfig.js'
+
+const db = firestore.getFirestore(app)
+
 const btnMenuClose = document.querySelector('#btnMenuClose')
 const btnMenuExpand = document.querySelector('#btnMenuExpand')
 const menu = document.querySelector('#menuNavegation')
@@ -65,4 +69,28 @@ class Modal{
     }    
 }
 
-export { Modal } 
+async function getCategories(){
+    let collection = await firestore.getDocs(firestore.collection(db, 'categories'))
+
+    let categories = []
+
+    collection.forEach((doc)=>{
+        categories.push(doc)
+    })
+
+    return categories
+}
+
+async function getSubCategories(){
+    let collection = await firestore.getDocs(firestore.collection(db, 'subCategories'))
+
+    let subCategories = []
+
+    collection.forEach((doc)=>{
+        subCategories.push(doc)
+    })
+
+    return subCategories
+}
+
+export { Modal, getCategories, getSubCategories } 
