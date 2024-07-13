@@ -93,4 +93,16 @@ async function getSubCategories(){
     return subCategories
 }
 
-export { Modal, getCategories, getSubCategories } 
+async function getProducts(){
+    let collection = await firestore.getDocs(firestore.collection(db, 'products'))
+
+    let products = []
+
+    collection.forEach((doc)=>{
+        products.push(doc)
+    })
+
+    return products
+}
+
+export { Modal, getCategories, getSubCategories, getProducts } 

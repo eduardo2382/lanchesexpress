@@ -1,6 +1,5 @@
 body{
     width: 100vw;
-    height: 100vh;
 
     background-color: white;
 
@@ -20,7 +19,6 @@ main{
 
 #containerKeyboard{
     width: 100vw;
-    height: 100vh;
 
     position: relative;
     left: 0%;
@@ -107,7 +105,7 @@ main{
 #containerMenu{
     width: 100vw;
 
-    padding: 30px 20px;
+    padding: 0px 20px;
 
     position: absolute;
     top: 0;
@@ -123,8 +121,25 @@ main{
     overflow: hidden;
 }
 
+#categoriesList,
+#productsList{
+    width: 100%;
+
+    padding: 9px 10px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex-wrap: wrap;
+
+    overflow: scroll;
+}
+
+#productsList{
+    display: none;
+}
+
 .categories,
-.subCategories,
 .products{
     width: 25vw;
     min-height: 120px;
@@ -135,6 +150,8 @@ main{
     align-items: center;
 
     text-align: center;
+
+    font-weight: bold;
 
     padding: 10px 15px;
     margin-bottom: 20px;
@@ -149,16 +166,17 @@ main{
 }
 
 .categories:hover,
-.subCategories:hover,
 .products:hover{
-    background-color: #e2e2e2;
+    background-color: black;
+    color: white;
+    box-shadow: none;
 }
 
 .categories img,
-.subCategories img,
-.products img{
+.products img,
+.active{
     width: 50px;
-    height: 50px;
+    height: 40px;
 
     border: none;
 
@@ -167,17 +185,6 @@ main{
     margin-bottom: 10px;
 }
 
-.categoriesList,
-.subCategories,
-.productsList{
-    width: 100%;
-
-    padding: 0px 10px;
-
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
 
 footer{
     position: absolute;
