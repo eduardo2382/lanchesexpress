@@ -85,7 +85,7 @@ function observeCategory(){
     categories.forEach((category)=>{
         category.addEventListener('click', ()=>{
             sessionStorage.setItem('currentCategory', category.parentNode.getAttribute('key'))
-            window.location.href = '../subcategory/index.html'
+            window.location.href = '../product/index.html'
         })
     })  
 }
