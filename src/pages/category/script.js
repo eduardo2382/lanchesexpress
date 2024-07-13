@@ -1,4 +1,4 @@
-import { Modal, getCategories, getSubCategories } from '../../../global.js'
+import { Modal, getCategories, getProducts } from '../../../global.js'
 import { firestore, app} from '../../../configs/firebaseConfig.js'
 
 const db = firestore.getFirestore(app)
@@ -98,8 +98,15 @@ function observeDeleteCategory(){
 
     buttons.forEach((button)=>{
         button.addEventListener('click', ()=>{
-            deleteSubCategories(button.getAttribute('key'))
-            deleteCategory(button.getAttribute('key'))
+            modal.cleanModal()
+            modal.showModal()
+            let btnConfirm = modal.newButton('Confirmar exclusão')
+            btnConfirm.addEventListener('click', ()=>{
+                deleteSubCategories(button.getAttribute('key'))
+                deleteCategory(button.getAttribute('key'))
+                modal.hideModal()
+            })
+            
         })
     })
 }
@@ -119,11 +126,11 @@ async function deleteCategory(key){
 }
 
 async function deleteSubCategories(key){
-    let subCategories = await getSubCategories()
+    let products = await getProducts()
 
-    subCategories.forEach(async (doc)=>{
+    products.forEach(async (doc)=>{
         if(doc.data().idCategory == key){
-            await firestore.deleteDoc(firestore.doc(db, 'subCategories', doc.data().name))
+            await firestore.deleteDoc(firestore.doc(db, 'products', doc.data().name))
         }
     })
 }

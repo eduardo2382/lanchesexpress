@@ -19,19 +19,21 @@ btnAddProduct.addEventListener('click', ()=>{
 function modalNewProduct(){
     modal.cleanModal()
     let name = modal.newInput('text', 'Nome do Produto:')
+    let value = modal.newInput('number', 'Valor do Produto:')
     let btnConfirm = modal.newButton('Confirmar')
     btnConfirm.addEventListener('click', ()=>{
         if(name.value){
             modal.hideModal()
-            addNewProduct(name.value)
+            addNewProduct(name.value, Number(value.value))
             loadProducts()
         }
     })
 }
 
-async function addNewProduct(value){
-    await firestore.setDoc(firestore.doc(db, 'products', value), {
-        name: value,
+async function addNewProduct(name, value){
+    await firestore.setDoc(firestore.doc(db, 'products', name), {
+        name: name,
+        value: value.toFixed(2),
         id: crypto.randomUUID(),
         idCategory: currentCategory
     })
@@ -46,7 +48,7 @@ async function loadProducts(){
     
     products.forEach((doc)=>{
         if(doc.data().idCategory == currentCategory){
-            createProductElement(doc.data().name, doc.data().id)
+            createProductElement(doc.data().name, doc.data().value, doc.data().id)
             doc.data().id
         }
     })
@@ -54,13 +56,13 @@ async function loadProducts(){
     observeDeleteProduct()
 }
 
-function createProductElement(name, id){
+function createProductElement(name, value, id){
     let product = document.createElement('div')
     product.setAttribute('class', 'products')
     product.setAttribute('key', id)
 
     let productName = document.createElement('span')
-    productName.innerHTML += name
+    productName.innerHTML += `${name}  -  R$${value}`
 
     product.appendChild(productName)
 
