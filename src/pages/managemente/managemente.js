@@ -44,16 +44,27 @@ function slideElement(element, porcent){
     element.style.left = porcent
 }
 
+function showElement(element, display='block'){
+    element.style.display = display
+}
+
+function hideElement(element){
+    element.style.display = 'none'
+}
+
+
+
 
 const categoriesList = document.querySelector('#categoriesList')
 const productsList = document.querySelector('#productsList')
 var currentCategory = ''
+var cart = []
 
 async function loadCategories(){
     let categories = await getCategories()
 
-    categoriesList.style.display = 'flex'
-    productsList.style.display = 'none'
+    showElement(categoriesList, 'flex')
+    hideElement(productsList)
 
     categoriesList.innerHTML = ''
 
@@ -92,8 +103,8 @@ function createCategoryElement(name, id){
 async function loadProducts(key){
     let products = await getProducts()
 
-    categoriesList.style.display = 'none'
-    productsList.style.display = 'flex'
+    hideElement(categoriesList)
+    showElement(productsList, 'flex')
 
     productsList.innerHTML = ''
 
@@ -112,24 +123,110 @@ function createProductElement(name, id){
     product.setAttribute('key', id)
 
     let productName = document.createElement('span')
+    productName.setAttribute('class', 'productName')
     productName.innerHTML += name
-
     product.appendChild(productName)
 
     productsList.appendChild(product)
 }
 
 function observeProducts(){
-    let products = document.querySelectorAll(".products")
+    let productsName = document.querySelectorAll(".productName")
 
-    products.forEach((product)=>{
-        product.addEventListener('click', ()=>{
-            loadCategories()
+    productsName.forEach((productName)=>{
+        productName.addEventListener('click', ()=>{
+            let product = productName.parentNode
+            let id = product.getAttribute('key')
 
-            firestore.setDoc(firestore.doc(db, 'products', crypto.randomUUID()), {
-                name: 'Pedido',
-                id: crypto.randomUUID()
-            })
+            product.classList.toggle('active')
+
+            if(!product.classList.contains('active')){
+                removeCart(id)
+                removeValue(product)
+            } else{
+                addCart(id, product)
+                createValue(product, id)
+            }
         })
     })
+}
+
+function removeCart(id){
+    cart = cart.filter(item => item.id != id)
+}
+
+function subtractCart(id, parentElement){
+    let value = parentElement.querySelector('.value')
+
+    cart.forEach((item)=>{
+        if(item.id == id){
+            if(item.quantity == 1){
+                removeCart(id)
+                removeValue(parentElement)
+                parentElement.classList.toggle('active')
+                
+            } else{
+                item.quantity--
+                value.innerText = item.quantity
+            }
+        }
+    })
+    
+}
+
+function addCart(id, parentElement){
+    let value = parentElement.querySelector('.value')
+
+    if(cart.filter(item => item.id == id).length == 0){
+        cart.push({
+            id: id,
+            quantity: 1
+        })
+    } else{
+        cart.forEach((item)=>{
+            if(item.id == id){
+                item.quantity++
+                value.innerText = item.quantity
+            }
+        })
+    }
+}
+
+function createValue(parentElement, id){
+    let areaValue = document.createElement('div')
+    areaValue.setAttribute('class', 'areaValue')
+
+    let addValue = document.createElement('button')
+    addValue.setAttribute('class', 'addValue')
+    let addIcon = document.createElement('i')
+    addIcon.setAttribute('class', 'ri-add-line')
+    addValue.appendChild(addIcon)
+
+
+    let subtractValue = document.createElement('button')
+    subtractValue.setAttribute('class', 'subtractValue')
+    let subtractIcon = document.createElement('i')
+    subtractIcon.setAttribute('class', 'ri-subtract-line')
+    subtractValue.appendChild(subtractIcon)
+
+    let value = document.createElement('span')
+    value.setAttribute('class', 'value')
+    value.innerText = '1'
+
+    areaValue.appendChild(subtractValue)
+    areaValue.appendChild(value)
+    areaValue.appendChild(addValue)
+    parentElement.appendChild(areaValue)
+
+    addValue.addEventListener(('click'), ()=>{
+        addCart(id, parentElement)
+    })
+
+    subtractValue.addEventListener(('click'), ()=>{
+        subtractCart(id, parentElement)
+    })
+}
+
+function removeValue(parentElement){
+    parentElement.removeChild(parentElement.querySelector('.areaValue'))
 }

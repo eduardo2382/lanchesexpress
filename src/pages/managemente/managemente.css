@@ -10,7 +10,7 @@ body{
 
 main{
     width: 100vw;
-    height: 100vh;
+    height: 100%;
 
     position: relative;
 
@@ -85,6 +85,7 @@ main{
     font-size: 1.5em;
 
     margin-top: 35px;
+    margin-bottom: 100px;
     padding: 5px 10px;
 
     color: #a1a1a1;
@@ -124,10 +125,11 @@ main{
 #categoriesList,
 #productsList{
     width: 100%;
+    max-height: 600px;
 
     padding: 9px 10px;
 
-    display: flex;
+    display: none;
     flex-direction: row;
     justify-content: space-around;
     flex-wrap: wrap;
@@ -136,7 +138,7 @@ main{
 }
 
 #productsList{
-    display: none;
+    display: flex;
 }
 
 .categories,
@@ -148,6 +150,8 @@ main{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    position: relative;
 
     text-align: center;
 
@@ -165,30 +169,71 @@ main{
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
 }
 
-.categories:hover,
-.products:hover{
+.active{
     background-color: black;
     color: white;
     box-shadow: none;
 }
 
-.categories img,
-.products img,
-.active{
-    width: 50px;
-    height: 40px;
+.productName{
+    width: 100%;
+    height: 80%;
 
-    border: none;
-
-    background-color: #c0c0c0;
-
-    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+.areaValue{
+    width: 100%;
+    height: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: relative;
+    top: 0px;
+
+    padding: 0px 3px;
+
+    z-index: 2;
+
+    border-radius: 3px;
+}
+
+.value{
+    font-size: 1.3em;
+}
+
+.subtractValue,
+.addValue{
+    color: white;
+
+    background-color: transparent;
+
+    border: none;
+    border-radius: 3px;
+
+    padding: 0px 2px;
+
+    font-size: 1.4em;
+    font-weight: bold;
+
+    z-index: 2;
+
+    cursor: pointer;
+}
+
+.subtractValue:hover,
+.addValue:hover{
+    background-color: rgba(255, 255, 255, 0.2);
+}
 
 footer{
     position: absolute;
     bottom: 0;
+    left: 0;
 
     display: flex;
     justify-content: space-around;
