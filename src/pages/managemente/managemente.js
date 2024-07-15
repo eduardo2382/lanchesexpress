@@ -59,10 +59,10 @@ const categoriesList = document.querySelector('#categoriesList')
 const productsList = document.querySelector('#productsList')
 var currentCategory = ''
 var cart = []
+var categories = await getCategories()
+var products = await getProducts()
 
-async function loadCategories(){
-    let categories = await getCategories()
-
+async function loadCategories(categories){
     showElement(categoriesList, 'flex')
     hideElement(productsList)
 
@@ -75,14 +75,14 @@ async function loadCategories(){
     observeCategories()
 }
 
-loadCategories()
+loadCategories(categories)
 
 function observeCategories(){
     let categories = document.querySelectorAll(".categories")
 
     categories.forEach((category)=>{
         category.addEventListener('click', ()=>{
-            loadProducts(category.getAttribute('key'))
+            loadProducts(category.getAttribute('key'), products)
         })
     })
 }
@@ -100,9 +100,7 @@ function createCategoryElement(name, id){
     categoriesList.appendChild(category)
 }
 
-async function loadProducts(key){
-    let products = await getProducts()
-
+async function loadProducts(key, products){
     hideElement(categoriesList)
     showElement(productsList, 'flex')
 
@@ -153,6 +151,7 @@ function observeProducts(){
 
 function removeCart(id){
     cart = cart.filter(item => item.id != id)
+    updateCart()
 }
 
 function subtractCart(id, parentElement){
@@ -171,6 +170,8 @@ function subtractCart(id, parentElement){
             }
         }
     })
+
+    updateCart()
     
 }
 
@@ -178,10 +179,16 @@ function addCart(id, parentElement){
     let value = parentElement.querySelector('.value')
 
     if(cart.filter(item => item.id == id).length == 0){
-        cart.push({
-            id: id,
-            quantity: 1
+        products.forEach((product)=>{
+            if(product.data().id == id){
+                cart.push({
+                    id: id,
+                    quantity: 1,
+                    value: product.data().value
+                })
+            }
         })
+        
     } else{
         cart.forEach((item)=>{
             if(item.id == id){
@@ -190,6 +197,8 @@ function addCart(id, parentElement){
             }
         })
     }
+
+    updateCart()
 }
 
 function createValue(parentElement, id){
@@ -229,4 +238,27 @@ function createValue(parentElement, id){
 
 function removeValue(parentElement){
     parentElement.removeChild(parentElement.querySelector('.areaValue'))
+}
+
+function updateCart(){
+    let containerCart = document.querySelector('.containerCart')
+    let valueCart = containerCart.querySelector('.cartValue')
+    let cartTotal = 0
+
+    if(cart.length > 0){
+        containerCart.style.bottom = '85px'
+        
+        cart.forEach((productCart)=>{
+            products.forEach((product)=>{
+                if(product.data().id == productCart.id){
+                    cartTotal = cartTotal + (product.data().value * productCart.quantity)
+                }
+            })
+        })
+
+    } else{
+        containerCart.style.bottom = '0px'
+    }
+
+    valueCart.innerText = `R$ ${cartTotal.toFixed(2)}`
 }
