@@ -18,6 +18,9 @@ btnSectionKeyboard.addEventListener('click',()=>{
     let keyboard = document.querySelector('#containerKeyboard')
     let menu = document.querySelector('#containerMenu')
 
+    let containerCart = document.querySelector('.containerCart')
+    containerCart.style.bottom = '0px'
+
     if(!state){
         currentSection = 'left'
         slideElement(bar, '0%')
@@ -38,6 +41,8 @@ btnSectionMenu.addEventListener('click',()=>{
         slideElement(keyboard, '-100%')
         slideElement(menu, '0%')
     }
+
+    updateCart()
 })
 
 function slideElement(element, porcent){
