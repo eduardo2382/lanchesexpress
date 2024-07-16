@@ -92,7 +92,7 @@ main{
     z-index: 2;
 }
 
-.btnDeleteCategory:hover{
+.btnDeleteCategory:active{
     color: black;
     background-color: white;
 }
