@@ -44,9 +44,7 @@ h2{
     margin-bottom: 15px;
 }
 
-.productName{
-    width: 80%;
-
+.spanProduct{
     display: flex;
     flex-direction: column;
 
@@ -63,19 +61,12 @@ h2{
     color: rgb(71, 71, 71);
 }
 
-.spanButtons{
-    width: 18%;
-
-    display: flex;
-    justify-content: space-between;
-}
-
-.products button{
-    font-size: 1em;
+.btnObservation{
+    font-size: 0.8em;
 
     padding: 2px 3px;
 
-    background-color: black;
+    background-color: rgb(0, 0, 0);
     color: white;
 
     border: none;
@@ -84,11 +75,46 @@ h2{
     transition: .2s;
     
     cursor: pointer;
+
+    margin-left: 10px;
 }
 
 .products button:active{
     background-color: white;
     color: black;
+}
+
+.spanValue{
+    width: 23%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.productQuantity{
+    font-size: 0.9em;
+
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.btnAdd,
+.btnSubtract{
+    font-size: 0.9em;
+    font-weight: bold;
+
+    padding: 2px;
+
+    background-color: black;
+    color: white;
+
+    border: none;
+    border-radius: 3px;
+
+    cursor: pointer;
+
+    transition: .2s;
 }
 
 .total{
@@ -127,11 +153,6 @@ h2{
 }
 
 .active{
-    background-color: black;
-    color: white;
-}
-
-.payments:active{
     background-color: black;
     color: white;
 }
