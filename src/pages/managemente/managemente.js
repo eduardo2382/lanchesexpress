@@ -20,15 +20,11 @@ var products = await getProducts()
 
 var currentSection = 'left'
 var currentCategory = ''
+
 var cart = []
-
-console.log(sessionStorage.getItem('cart'))
-
 if(sessionStorage.getItem('cart') != null){
     cart = JSON.parse(sessionStorage.getItem("cart"))
 }
-
-console.log(JSON.parse(sessionStorage.getItem("cart")))
 
 
 
