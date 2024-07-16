@@ -8,9 +8,29 @@ window.onpopstate = () => {
     window.history.pushState(null, '', window.location.href);
 }
 
-var currentSection = 'left'
 const btnSectionKeyboard = document.querySelector('#btnSectionKeyboard')
 const btnSectionMenu = document.querySelector('#btnSectionMenu')
+const btnCart = document.querySelector('.btnCart')
+
+const categoriesList = document.querySelector('#categoriesList')
+const productsList = document.querySelector('#productsList')
+
+var categories = await getCategories()
+var products = await getProducts()
+
+var currentSection = 'left'
+var currentCategory = ''
+var cart = []
+
+console.log(sessionStorage.getItem('cart'))
+
+if(sessionStorage.getItem('cart') != null){
+    cart = JSON.parse(sessionStorage.getItem("cart"))
+}
+
+console.log(JSON.parse(sessionStorage.getItem("cart")))
+
+
 
 btnSectionKeyboard.addEventListener('click',()=>{
     let state = currentSection == 'left'
@@ -18,15 +38,14 @@ btnSectionKeyboard.addEventListener('click',()=>{
     let keyboard = document.querySelector('#containerKeyboard')
     let menu = document.querySelector('#containerMenu')
 
-    let containerCart = document.querySelector('.containerCart')
-    containerCart.style.bottom = '0px'
-
     if(!state){
         currentSection = 'left'
         slideElement(bar, '0%')
         slideElement(keyboard, '0%')
         slideElement(menu, '100%')
     }
+
+    updateCart()
 })
 
 btnSectionMenu.addEventListener('click',()=>{
@@ -45,6 +64,14 @@ btnSectionMenu.addEventListener('click',()=>{
     updateCart()
 })
 
+btnCart.addEventListener('click', ()=>{
+    sessionStorage.setItem('cart', JSON.stringify(cart))
+
+    window.location.href = '../cart/index.html'
+})
+
+
+
 function slideElement(element, porcent){
     element.style.left = porcent
 }
@@ -57,30 +84,20 @@ function hideElement(element){
     element.style.display = 'none'
 }
 
-
-
-
-const categoriesList = document.querySelector('#categoriesList')
-const productsList = document.querySelector('#productsList')
-var currentCategory = ''
-var cart = []
-var categories = await getCategories()
-var products = await getProducts()
-
-async function loadCategories(categories){
+function loadCategories(){
     showElement(categoriesList, 'flex')
     hideElement(productsList)
 
-    categoriesList.innerHTML = ''
-
-    categories.forEach((doc)=>{
-        createCategoryElement(doc.data().name, doc.data().id)
-    })
+    if(categoriesList.childNodes.length == 0){
+        categories.forEach((doc)=>{
+            createCategoryElement(doc.data().name, doc.data().id)
+        })
+    }
 
     observeCategories()
 }
 
-loadCategories(categories)
+loadCategories()
 
 function observeCategories(){
     let categories = document.querySelectorAll(".categories")
@@ -105,11 +122,13 @@ function createCategoryElement(name, id){
     categoriesList.appendChild(category)
 }
 
-async function loadProducts(key, products){
+function loadProducts(key){
     hideElement(categoriesList)
     showElement(productsList, 'flex')
 
     productsList.innerHTML = ''
+
+    createButtonBack()
 
     products.forEach((doc)=>{
         if(doc.data().idCategory == key){
@@ -131,6 +150,27 @@ function createProductElement(name, id){
     product.appendChild(productName)
 
     productsList.appendChild(product)
+
+    cart.forEach((productCart)=>{
+        if(productCart.id == id){
+            product.classList.add('active')
+
+            createValue(product, id, productCart.quantity)
+        }
+    })
+}
+
+function createButtonBack(){
+    let btnBack = document.createElement('button')
+    btnBack.setAttribute('class', 'btnBack')
+    let iconBack = document.createElement('i')
+    iconBack.setAttribute('class', 'ri-arrow-left-line')
+    btnBack.appendChild(iconBack)
+    productsList.appendChild(btnBack)
+
+    btnBack.addEventListener('click', ()=>{
+        loadCategories()
+    })
 }
 
 function observeProducts(){
@@ -148,7 +188,7 @@ function observeProducts(){
                 removeValue(product)
             } else{
                 addCart(id, product)
-                createValue(product, id)
+                createValue(product, id, '1')
             }
         })
     })
@@ -206,7 +246,7 @@ function addCart(id, parentElement){
     updateCart()
 }
 
-function createValue(parentElement, id){
+function createValue(parentElement, id, quantity){
     let areaValue = document.createElement('div')
     areaValue.setAttribute('class', 'areaValue')
 
@@ -225,7 +265,7 @@ function createValue(parentElement, id){
 
     let value = document.createElement('span')
     value.setAttribute('class', 'value')
-    value.innerText = '1'
+    value.innerText = quantity
 
     areaValue.appendChild(subtractValue)
     areaValue.appendChild(value)
@@ -250,20 +290,24 @@ function updateCart(){
     let valueCart = containerCart.querySelector('.cartValue')
     let cartTotal = 0
 
-    if(cart.length > 0){
-        containerCart.style.bottom = '85px'
-        
-        cart.forEach((productCart)=>{
-            products.forEach((product)=>{
-                if(product.data().id == productCart.id){
-                    cartTotal = cartTotal + (product.data().value * productCart.quantity)
-                }
+    if(currentSection == 'right'){
+        if(cart.length > 0){
+            containerCart.style.bottom = '85px'
+            
+            cart.forEach((productCart)=>{
+                products.forEach((product)=>{
+                    if(product.data().id == productCart.id){
+                        cartTotal = cartTotal + (product.data().value * productCart.quantity)
+                    }
+                })
             })
-        })
 
+            valueCart.innerText = `R$ ${cartTotal.toFixed(2)}`
+    
+        } else{
+            containerCart.style.bottom = '0px'
+        }
     } else{
         containerCart.style.bottom = '0px'
     }
-
-    valueCart.innerText = `R$ ${cartTotal.toFixed(2)}`
 }

@@ -133,11 +133,13 @@ main{
     justify-content: space-around;
     flex-wrap: wrap;
 
+    position: relative;
+
     overflow: scroll;
 }
 
 #productsList{
-    display: flex;
+    padding-top: 50px;
 }
 
 .categories,
@@ -155,6 +157,7 @@ main{
     text-align: center;
 
     font-weight: bold;
+    padding: 0px 4px;
 
     margin-bottom: 20px;
 
@@ -225,6 +228,29 @@ main{
 .subtractValue:active,
 .addValue:active{
     background-color: rgba(255, 255, 255, 0.2);
+}
+
+.btnBack{
+    position: absolute;
+    top: 0px;
+    left: 20px;
+
+    background-color: transparent;
+    border: none;
+    
+    z-index: 2;
+
+    font-size: 2em;
+    font-weight: 900;
+
+    border-radius: 3px;
+
+    cursor: pointer;
+}
+
+.btnBack:active{
+    background-color: black;
+    color: white;
 }
 
 .containerCart{
