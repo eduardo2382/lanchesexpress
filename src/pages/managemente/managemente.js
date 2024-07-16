@@ -225,7 +225,8 @@ function addCart(id, parentElement){
                 cart.push({
                     id: id,
                     quantity: 1,
-                    value: product.data().value
+                    value: product.data().value,
+                    name: product.data().name
                 })
             }
         })
@@ -306,4 +307,6 @@ function updateCart(){
     } else{
         containerCart.style.bottom = '0px'
     }
+
+    console.log(cart)
 }
