@@ -66,7 +66,17 @@ class Modal{
         this.modalContent.appendChild(btnModal)
 
         return btnModal
-    }    
+    }   
+    
+    newTittle(text){
+        let tittleModal = document.createElement('h2')
+        tittleModal.setAttribute('class', 'titleModal')
+        tittleModal.innerText = text
+        
+        this.modalContent.appendChild(tittleModal)
+
+        return tittleModal
+    } 
 }
 
 async function getCategories(){

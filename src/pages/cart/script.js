@@ -3,13 +3,13 @@ import { firestore, app} from '../../../configs/firebaseConfig.js'
 
 const db = firestore.getFirestore(app)
 
+const modal = new Modal()
+
 const btnConfirm = document.querySelector('.btnConfirm')
 
 var cart = JSON.parse(sessionStorage.getItem('cart'))
 
 var productsList = document.querySelector('.productsList')
-
-var request = []
 
 const payments = document.querySelectorAll('.payments')
 
@@ -20,8 +20,33 @@ payments.forEach((button)=>{
         })
         button.classList.toggle('active')
 
-        request.methodPayment = button.getAttribute('key')
+        methodPayment = button.getAttribute('key')
     })
+})
+
+var methodPayment = undefined
+
+btnConfirm.addEventListener('click', async ()=>{
+    let id = `${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`
+
+    if(methodPayment != undefined){
+        if(await confirmAction('Confirmar pedido ?', 'Confirmar')){
+            sessionStorage.removeItem('cart')
+
+            await firestore.setDoc(firestore.doc(db, 'requests', id), {
+                id: id,
+                products: cart,
+                time: getTime(),
+                methodPayment: methodPayment
+            }).then( async ()=>{
+                if(await confirmAction(`Pedido ${id} confirmado`, 'Ok')){
+                    window.location.href = '../managemente/managemente.html'
+                }
+            })
+        }
+    } else{
+        confirmAction('Selecione um metodo de pagamento!!')
+    }
 })
 
 function loadProducts(){
@@ -30,8 +55,6 @@ function loadProducts(){
     cart.forEach((product)=>{
         createProductElement(product, product.id)
     })
-
-    request.products = cart
 
     updateTotal()
     observeAdd()
@@ -154,12 +177,19 @@ function observeSubtract(){
                 let elementKey = element.getAttribute('key')
 
                 if(elementKey == buttonKey){
-                    cart.forEach((item)=>{
+                    cart.forEach(async (item)=>{
                         if(item.id == buttonKey){
-                            if(item.quantity > 0){
+                            if(item.quantity > 1){
                                 item.quantity--
                                 element.innerText = item.quantity
-                            } 
+                            } else{
+                                if(await confirmAction('Confima a exclusao?', 'Confirmo')){
+                                    console.log('asdd')
+                                    removeCart(item.id)
+                                } else{
+                                    console.log('oal')
+                                }
+                            }
                         }
                     })
                 }
@@ -171,14 +201,37 @@ function observeSubtract(){
     })
 }
 
+function removeCart(id){
+    cart = cart.filter(item => item.id != id)
+    loadProducts()
+    updateCart()
+
+    if(cart.length == 0){
+        window.location.href = '../managemente/managemente.html'
+    }
+}
+
 function updateCart(){
     sessionStorage.setItem('cart', JSON.stringify(cart))
 }
 
-function updateRequest(){
-    request = {}
-
-    cart.forEach((item)=>{  
-
+async function confirmAction(tittle, button=undefined){
+    return new Promise((resolve)=>{
+        modal.showModal()
+        modal.cleanModal()
+        modal.newTittle(tittle)
+        if(button != undefined){
+            let confirmRemove = modal.newButton(button)
+            confirmRemove.addEventListener('click',()=>{
+                modal.hideModal()
+                resolve(true)
+            })
+        }
     })
+}
+
+function getTime(){
+    let date = new Date()
+
+    return `${date.getHours()}:${date.getMinutes()}:${date.getMilliseconds()}`
 }

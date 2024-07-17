@@ -95,13 +95,14 @@ header{
     padding: 10px 10px;
     margin-top: 20px;
 
-    font-size: 1.2em;
+    font-size: 1.1em;
     font-weight: bold;
     text-align: center;
     text-decoration: none;
 
     display: flex;
     flex-direction: column;
+    align-items: center;
 
     transition: .3s;
 
@@ -164,6 +165,7 @@ header{
 
 .titleModal{
     text-align: center;
+    color: black;
 }
 
 .inputModal{
@@ -173,7 +175,7 @@ header{
     border-radius: 5px;
 
     padding: 5px 5px 5px 5px;
-    margin-top: 15px;
+    margin-top: 5px;
 
     font-size: 1.2em;
     
@@ -186,7 +188,6 @@ header{
 
 .btnModal{
     width: 90%;
-    margin-top: 20px;
 
     background-color: black;
     color: white;
