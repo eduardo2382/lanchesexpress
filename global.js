@@ -6,13 +6,17 @@ const btnMenuClose = document.querySelector('#btnMenuClose')
 const btnMenuExpand = document.querySelector('#btnMenuExpand')
 const menu = document.querySelector('#menuNavegation')
 
-btnMenuExpand.addEventListener('click', ()=>{
-    slideElement(menu, '0%')
-})
+if(btnMenuExpand != null){
+    btnMenuExpand.addEventListener('click', ()=>{
+        slideElement(menu, '0%')
+    })
+}
 
-btnMenuClose.addEventListener('click', ()=>{
-    slideElement(menu, '-100%')
-})
+if(btnMenuClose != null){
+    btnMenuClose.addEventListener('click', ()=>{
+        slideElement(menu, '-100%')
+    })
+}
 
 function slideElement(element, porcent){
     element.style.left = porcent
@@ -77,6 +81,16 @@ class Modal{
 
         return tittleModal
     } 
+
+    newText(text){
+        let textModal = document.createElement('span')
+        textModal.setAttribute('class', 'textModal')
+        textModal.innerText = text
+        
+        this.modalContent.appendChild(textModal)
+
+        return textModal
+    }
 }
 
 async function getCategories(){
@@ -115,4 +129,16 @@ async function getProducts(){
     return products
 }
 
-export { Modal, getCategories, getSubCategories, getProducts } 
+async function getRequests(){
+    let collection = await firestore.getDocs(firestore.collection(db, 'requests'))
+
+    let requests = []
+
+    collection.forEach((doc)=>{
+        requests.push(doc)
+    })
+
+    return requests
+}
+
+export { Modal, getCategories, getSubCategories, getProducts, getRequests } 

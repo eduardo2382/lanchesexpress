@@ -33,3 +33,60 @@ main{
 
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);
 }
+
+.containerProducts{
+    width: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+
+    padding: 10px 25px 0px 25px;
+}
+
+.requestProduct{
+    margin-bottom: 10px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+
+    font-size: 0.9em;
+}
+
+.productObservation{
+    margin-left: 20px;
+
+    color: rgb(71, 71, 71);
+}
+
+.requestFooter{
+    width: 100%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0px 15px;
+    margin-top: 10px;
+}
+
+.btnReady{
+    font-size: 0.9em;
+    font-weight: bold;
+
+    background-color: black;
+    color: white;
+
+    border: none;
+    border-radius: 5px;
+
+    padding: 5px 10px;
+
+    cursor: pointer;
+}
+
+.btnReady:hover{
+    background-color: white;
+    color: black;
+}

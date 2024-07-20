@@ -1,35 +1,93 @@
 import { firestore, app} from '../../../configs/firebaseConfig.js'
 
+import { getRequests, Modal } from '../../../global.js'
+
 const db = firestore.getFirestore(app)
 
-async function getRequests(){
-    let collection = await firestore.getDocs(firestore.collection(db, 'requests'))
+const modal = new Modal()
 
-    let requests = []
+const requests = []
 
-    collection.forEach((doc)=>{
-        requests.push(doc)
-    })
+observerRequests()
 
-    return requests
+async function observerRequests(){
+    setInterval(async ()=>{
+        let tempRequests = await getRequests()
+
+        if(requests.length == 0){
+            loadRequests(tempRequests)
+        }
+
+    }, 4000)
 }
 
-function createElementRequest(element){
-    let main = document.querySelector('main')
+function orderRequests(){
+    requests.sort((a, b)=>{
+        if(a.time.hour === b.time.hour){
 
-    let request = document.createElement('div')
-    request.setAttribute('class', 'requests')
-    request.innerText = `Pedido ${element.id}`
+            if(a.time.minute === b.time.minute){
+                
+                return a.time.second - b.time.second
 
-    main.appendChild(request)
+            }else{
+                return a.time.minute - b.time.minute
+            }
+
+        }else{
+            return a.time.hour - b.time.hour
+        }
+    })
+
+    console.log(requests)
 }
 
-setInterval(async ()=>{
-    let requests = await getRequests()
-
-    document.querySelector('main').innerHTML = ''
-
-    requests.forEach((request)=>{
-        createElementRequest(request)
+async function loadRequests(tempRequests){
+    tempRequests.forEach((request)=>{
+        requests.push(request.data())
     })
-}, 1000)
+
+    orderRequests()
+    
+    for (let i = 0; i  < requests.length; i++) {
+        const request = requests[i]
+        
+        if(request.state == 'pending'){
+            await receiveRequest(request)
+        }
+    }
+}
+
+
+function receiveRequest(request){
+    return new Promise((resolve)=>{
+        modal.showModal()
+        modal.cleanModal()
+        modal.newTittle(`Pedido  ${request.id}`)
+        request.products.forEach((product)=>{
+            modal.newText(`${product.quantity} - ${product.name}`)
+            
+        })
+        let btnReceive = modal.newButton('Receber pedido')
+
+        btnReceive.addEventListener('click', ()=>{
+            modal.hideModal()
+            updateState(request)
+            resolve(true)
+        })
+    })
+}   
+
+async function updateState(request){
+    let requestsFirebase = await getRequests()
+
+    requestsFirebase.forEach((item)=>{
+        if(item.data().id == request.id){
+            let doc = firestore.doc(db, 'requests', `${item.data().id}`)
+
+            firestore.updateDoc(doc, {
+                state: 'confirm'
+            })
+        }
+    })
+}
+

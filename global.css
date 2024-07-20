@@ -186,6 +186,11 @@ header{
     border-color: black;
 }
 
+.textModal{
+    font-size: 1.4em;
+    margin-top: 20px;
+}
+
 .btnModal{
     width: 90%;
 
@@ -196,6 +201,7 @@ header{
     font-weight: bold;
 
     padding: 10px 10px;
+    margin-top: 20px;
 
     transition: .2s;
 

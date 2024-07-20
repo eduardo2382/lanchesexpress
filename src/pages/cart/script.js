@@ -1,4 +1,4 @@
-import { Modal, getCategories, getProducts } from '../../../global.js'
+import { Modal, getCategories, getProducts, getRequests } from '../../../global.js'
 import { firestore, app} from '../../../configs/firebaseConfig.js'
 
 const db = firestore.getFirestore(app)
@@ -27,19 +27,24 @@ payments.forEach((button)=>{
 var methodPayment = undefined
 
 btnConfirm.addEventListener('click', async ()=>{
-    let id = `${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`
+    let identifier = await generateId()
 
     if(methodPayment != undefined){
         if(await confirmAction('Confirmar pedido ?', 'Confirmar')){
             sessionStorage.removeItem('cart')
 
-            await firestore.setDoc(firestore.doc(db, 'requests', id), {
-                id: id,
+            await firestore.setDoc(firestore.doc(db, 'requests', identifier), {
+                id: identifier,
                 products: cart,
-                time: getTime(),
-                methodPayment: methodPayment
+                time: {
+                    hour: getTime().getHours(),
+                    minute: getTime().getMinutes(),
+                    second: getTime().getSeconds()
+                },
+                methodPayment: methodPayment,
+                state: 'pending'
             }).then( async ()=>{
-                if(await confirmAction(`Pedido ${id} confirmado`, 'Ok')){
+                if(await confirmAction(`Pedido ${identifier} confirmado`, 'Ok')){
                     window.location.href = '../managemente/managemente.html'
                 }
             })
@@ -233,5 +238,30 @@ async function confirmAction(tittle, button=undefined){
 function getTime(){
     let date = new Date()
 
-    return `${date.getHours()}:${date.getMinutes()}:${date.getMilliseconds()}`
+    return date
 }
+
+async function getIds(){
+    let requests = await getRequests()
+    let ids = []
+
+    requests.forEach((request)=>{
+        ids.push(request.data().id)
+    })
+
+    return ids
+}
+
+async function generateId(){
+    let identifier = `${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}${Math.floor(Math.random() * 10)}`
+
+    let ids = await getIds()
+
+    if(!ids.find((item)=> item == identifier)){
+        console.log(typeof identifier)
+        return identifier
+    }else{
+        generateId()
+    }
+}
+
