@@ -1,0 +1,32 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente (segredos)
+.env
+.env.local
+*.env
+!*.env.example
+
+# Build/dist
+dist/
+build/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Banco local (se usar SQLite em algum momento)
+*.sqlite
+*.db
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Uploads/arquivos gerados (ex: notas fiscais em PDF salvas localmente, se houver)
+uploads/
+tmp/
