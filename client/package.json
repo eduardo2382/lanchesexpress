@@ -1,0 +1,21 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "postcss.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "css:dev": "npx @tailwindcss/cli -i ./src/input.css -o ./public/shared/output.css --watch",
+    "css:build": "npx @tailwindcss/cli -i ./src/input.css -o ./public/shared/output.css --minify",
+    "copy-remixicon": "cp -r node_modules/remixicon/fonts public/shared/vendor/remixicon/ && cp node_modules/remixicon/remixicon.css public/shared/vendor/remixicon/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "remixicon": "^4.9.1",
+    "tailwindcss": "^4.3.3"
+  }
+}

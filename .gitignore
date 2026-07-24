@@ -30,3 +30,6 @@ Thumbs.db
 # Uploads/arquivos gerados (ex: notas fiscais em PDF salvas localmente, se houver)
 uploads/
 tmp/
+
+#output.css do tailwind
+client/public/shared/output.css
