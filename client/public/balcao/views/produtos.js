@@ -241,8 +241,9 @@ function showModalOptions(app, product){
     })
 }
 
-function elementItemCart(app, item){
+function elementItemCart(app, item, price){
     let clone = tplProductCart.content.cloneNode(true)
+    let card = clone.querySelector("li")
     let priceItemCart = clone.querySelector('.priceItemCart')
     let nameItemCart = clone.querySelector('.nameItemCart')
     let quantItemCart = clone.querySelector('.quantItemCart')
@@ -256,6 +257,7 @@ function elementItemCart(app, item){
         remCart(item, true)
         updateQuantityProducts(app)
         updateTotal(app)
+        card.remove()
     })
 
     return clone
