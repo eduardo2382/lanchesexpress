@@ -16,6 +16,7 @@
             <h1 class="w-full text-4xl font-bold">Pagamento</h1>
         </header>
 
+
         <main class="w-full flex flex-col flex-1 min-h-0 p-6">
             <div class="flex flex-col max-h-full min-h-0 px-6 border border-[#E5E5E5] rounded-xl sumaryOrder">
                 <div class="flex flex-col max-h-full min-h-0 gap-4 border-b border-[#E5E5E5] py-4">
@@ -119,6 +120,8 @@
             </div>
             
         </main>
+
+
         <footer class="flex flex-col px-6">
             <div class="flex flex-row gap-3 py-4 discountContainer">
                 <button class=" w-1/2 text-lg  border border-[#E5E5E5] p-3 rounded-xl active:bg-[#F1F1F1]">
@@ -149,6 +152,29 @@
                 </div>
             </div>
         </footer>
+
+        <div class="w-screen h-screen flex items-center justify-center bg-black/40 absolute top-0 left-0 overflow-hidden modal">
+
+            <section class="w-full flex flex-col absolute bottom-0 bg-white rounded-t-2xl px-6 py-8">
+                <div class="flex flex-row justify-between items-start">
+                    <span>
+                        <h2 class="font-bold text-2xl">Adicionar acréscimo</h2>
+                        <span class="text-[#737373]">Informe o valor adicional do pedido.</span>
+                    </span>
+
+                    <i class="ri-close-line text-3xl text-[#737373] p-2 active:bg-[#f1f1f1] rounded-md btnClose"></i>
+                </div>
+
+                <div class="flex flex-col mt-4 gap-2">
+                    <span class="text-lg">Valor</span>
+                    <input type="number" placeholder="R$ 0,00" name="" id="" class="font-bold text-2xl border-2 border-black rounded-2xl p-4">
+                </div>
+
+                <button class="w-full text-white text-2xl font-bold bg-black mt-6 p-4 rounded-2xl">Aplicar acréscimo</button>
+
+            </section>
+
+        </div>
 
     </div>
 
