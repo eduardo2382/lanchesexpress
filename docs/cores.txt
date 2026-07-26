@@ -1,0 +1,6 @@
+#f1f1f1 - active bg buttons
+#262626 - active border
+#E5E5E5 - bordas claras finas
+#000000 - letra destaque
+#737373 - letra secundaria
+#A3A3A3 - letra terciaria

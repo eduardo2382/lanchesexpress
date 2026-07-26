@@ -1,4 +1,5 @@
 import { getQuantCart, addCart, remCart, totalPriceCart, totalProductsCart, forItensCart } from "../carrinho.js"
+import { changeScreen } from "../balcao.js"
 
 const categories = ["pedidos", "bebidas", "doces", "almoço"]
 
@@ -49,10 +50,10 @@ tplOrdersPage.innerHTML = `
 const tplAssembledProductCard = document.createElement('template')
 tplAssembledProductCard.innerHTML = `
     <li class="h-48 flex flex-col items-start justify-between border-r border-b border-[#E5E5E5] p-6 active:bg-[#E5E5E5]">
-        <span class="text-xl text-[#737373] name">Tapioca</span>
+        <span class="text-xl text-[#737373] name"></span>
         <span class="flex flex-col">
             <span class="text-lg text-[#A3A3A3]">a partir de</span>
-            <span class="text-2xl font-bold price">R$ 10,00</span>
+            <span class="text-2xl font-bold price"></span>
         </span>
         <button class="font-bold text-xl flex flex-row">
             Montar
@@ -150,7 +151,7 @@ tplMenuCart.innerHTML = `
                 <span class="text-2xl text-[#737373]">Total</span>
                 <span class="text-3xl font-bold priceCart"></span>
             </div>
-            <button class="w-full bg-black text-white font-bold text-2xl rounded-xl p-6 active:bg-black/85">Finalizar pedido</button>
+            <button class="w-full bg-black text-white font-bold text-2xl rounded-xl p-6 active:bg-black/85 btnCompleteOrder">Finalizar pedido</button>
         </div>
     </section>
 `
@@ -161,13 +162,14 @@ tplProductCart.innerHTML = `
         <div class="flex flex-row items-center justify-between gap-1">
             <div class="flex flex-row items-center gap-2">
                 <span class="size-8 flex flex-row items-center justify-center font-bold bg-black text-xl text-white rounded-sm quantItemCart">10</span>
-                <span class="text-2xl font-bold line-clamp-1 nameItemCart">Cuscuz</span>
+                <span class="text-2xl font-bold line-clamp-1 nameItemCart"></span>
             </div>
             <i class="ri-delete-bin-line text-3xl text-[#A3A3A3] p-2 active:text-black btnDeleteCart"></i>
         </div>
         <div class="text-[#737373] priceItemCart"></div>
     </li>
 `
+
 
 function closeModalOptions(modal, menuOptions){
     menuOptions.classList.toggle('translate-y-full')
@@ -178,6 +180,7 @@ function closeModalOptions(modal, menuOptions){
         modal.innerHTML = ''
     }, {once:true})
 }
+
 
 function showModalOptions(app, product){
     let modal = app.querySelector('.modal')
@@ -218,21 +221,15 @@ function showModalOptions(app, product){
         quantity++
 
         quantDisplay.textContent = quantity
-
-        console.log("Quantity: " + quantity)
     })
 
     quantRem.addEventListener('click', ()=>{
         quantity > 1 ? quantity-- : undefined
 
         quantDisplay.textContent = quantity
-
-        console.log("Quantity: " + quantity)
     })
 
     btnAddProduct.addEventListener('click', ()=>{
-        console.log("Quantity: " + quantity)
-
         addCart(product, quantity)
 
         updateTotal(app)
@@ -240,6 +237,7 @@ function showModalOptions(app, product){
         closeModalOptions(modal, menuOptions)
     })
 }
+
 
 function elementItemCart(app, item, price){
     let clone = tplProductCart.content.cloneNode(true)
@@ -263,6 +261,7 @@ function elementItemCart(app, item, price){
     return clone
 }
 
+
 function showCart(app){
     let modal = app.querySelector('.modal')
     let clone = tplMenuCart.content.cloneNode(true)
@@ -274,6 +273,7 @@ function showCart(app){
     let productListCart = modal.querySelector('.productListCart')
     let priceCart = modal.querySelector('.priceCart')
     let closeCart = modal.querySelector('.closeCart')
+    let btnCompleteOrder = modal.querySelector('.btnCompleteOrder')
 
     menuCart.addEventListener('click', (e)=>{
         e.stopPropagation()
@@ -288,6 +288,12 @@ function showCart(app){
 
     priceCart.textContent = `R$ ${totalPriceCart()},00`
 
+    productListCart.innerHTML = ''
+
+    forItensCart((item)=>{
+        productListCart.appendChild(elementItemCart(app, item))
+    })
+
     closeCart.addEventListener('click', ()=>{
         menuCart.classList.toggle('translate-x-full')
         menuCart.classList.toggle('translate-x-0')
@@ -300,13 +306,12 @@ function showCart(app){
         }, {once:true})
     })
 
-    productListCart.innerHTML = ''
-
-    forItensCart((item)=>{
-        productListCart.appendChild(elementItemCart(app, item))
+    btnCompleteOrder.addEventListener('click', ()=>{
+        changeScreen('pagamento')
     })
 
 }
+
 
 function updateTotal(app){
     let totalProducts = app.querySelector('.totalProducts')
@@ -334,6 +339,7 @@ function updateTotal(app){
     priceCart ? priceCart.textContent = `R$ ${price},00` : undefined
 }
 
+
 function updateQuantityProducts(app){
     let singleProductCardList = app.querySelectorAll('.singleProductCard')
 
@@ -345,11 +351,9 @@ function updateQuantityProducts(app){
         let quantDisplay = element.querySelector('.quantDisplay')
         let quantity = getQuantCart(product)
         let quantBox = element.querySelector('.quantBox')
-        console.log(quantBox)
         let btnAdd = element.querySelector('.btnAdd')
 
         if(quantity){
-            console.log("quantidade: " + quantity)
             quantDisplay.textContent = quantity
         }else{
             quantBox.classList.add('hidden')
@@ -357,6 +361,7 @@ function updateQuantityProducts(app){
         }
     })
 }
+
 
 function renderProductCategory(app){
     let productsContainer = app.querySelector('.productList')
@@ -378,7 +383,6 @@ function renderProductCategory(app){
             let quantDisplay = clone.querySelector('.quantDisplay')
             let quantAdd = clone.querySelector('.quantAdd')
             let quantRem = clone.querySelector('.quantRem')
-            console.log(quantDisplay.textContent)
             let quantity = 0 
 
             if(getQuantCart(product)){ quantity = getQuantCart(product)}
