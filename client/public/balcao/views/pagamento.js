@@ -2,8 +2,8 @@ import { forItensCart } from '../carrinho.js'
 
 var totalItemsCart = 0
 var totalPriceCart = 0
-var totalPriceOrder;
-var totalPayablePrice;
+var totalPriceOrder = 0;
+var totalPayablePrice = 0;
 var totalPaidPrice = 0;
 
 const tplPaymentPage = document.createElement('template')
@@ -221,23 +221,38 @@ function showModal(app, data, limit=false){
 
 function updatePayable(app){
     let payablePriceElement = app.querySelector('.payable-price')
+    let priceFormat = totalPayablePrice.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2
+    })
 
-    payablePriceElement.textContent = `R$ ${totalPayablePrice},00`
+    payablePriceElement.textContent = `${priceFormat}`
 }
 
 function updateTotalPrice(app){
     let totalPriceElement = app.querySelector('.total-price')
+    let priceFormat = totalPriceOrder.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2
+    })
 
-    totalPriceElement.textContent = `R$ ${totalPriceOrder},00`
+    totalPriceElement.textContent = `${priceFormat}`
 }
 
 function updatePaid(app){
     let paidContainer = app.querySelector('.paid-container')
     let paidPrice = app.querySelector('.paid-price')
+    let priceFormat = totalPaidPrice.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2
+    })
 
     paidContainer.classList.contains('hidden') ? paidContainer.classList.remove('hidden') : undefined
 
-    paidPrice.textContent = `- R$ ${totalPaidPrice},00`
+    paidPrice.textContent = `- ${priceFormat}`
 }
 
 export async function renderPagamento(app){
@@ -252,7 +267,7 @@ export async function renderPagamento(app){
     let btnAddition = app.querySelector('.btn-addition')
 
     forItensCart((item)=>{
-        totalItemsCart++
+        totalItemsCart += item.quant
         totalPriceCart += item.preco*item.quant
     })
 
