@@ -1,4 +1,5 @@
 import { forItensCart } from '../carrinho.js'
+import { changeScreen } from '../balcao.js'
 
 var totalItemsCart = 0
 var totalPriceCart = 0
@@ -6,12 +7,17 @@ var totalPriceOrder = 0;
 var totalPayablePrice = 0;
 var totalPaidPrice = 0;
 
-var paymentsMethods = []
+var paymentsMethods = [
+    {name: 'dinheiro', price: 0},
+    {name: 'debito', price: 0},
+    {name: 'credito', price: 0},
+    {name: 'pix', price: 0},
+]
 
 const tplPaymentPage = document.createElement('template')
 tplPaymentPage.innerHTML = `
     <header class="shrink-0 flex flex-row gap-2 border-b-2 border-[#E5E5E5] py-6 px-6">
-        <button>
+        <button class="button-return">
             <i class="ri-arrow-left-line text-4xl rounded-md p-1 active:bg-[#f1f1f1]"></i>
         </button>
         <h1 class="w-full text-4xl font-bold">Pagamento</h1>
@@ -78,9 +84,9 @@ tplPaymentPage.innerHTML = `
         </div>
     </footer>
 
-    <div class="w-screen h-screen flex items-center justify-center bg-black/40 absolute top-0 left-0 overflow-hidden modal hidden">
+    <div class="w-screen h-screen flex items-center justify-center bg-black/40 absolute top-0 left-0 overflow-hidden modalInput hidden">
 
-        <section class="w-full flex flex-col absolute bottom-0 translate-y-full bg-white rounded-t-2xl px-6 py-8 transition-transform duration-300 modal-container">
+        <section class="w-full flex flex-col absolute bottom-0 translate-y-full bg-white rounded-t-2xl px-6 py-8 transition-transform duration-300 hidden modal-container">
             <div class="flex flex-row justify-between items-start">
                 <span>
                     <h2 class="font-bold text-2xl modal-title">Adicionar acréscimo</h2>
@@ -98,7 +104,12 @@ tplPaymentPage.innerHTML = `
             <button class="w-full text-white text-2xl font-bold bg-black/40 mt-6 p-4 rounded-2xl modal-button">Aplicar acréscimo</button>
 
         </section>
+    </div>
 
+    <div class="w-screen h-screen flex items-center justify-center bg-black/40 absolute top-0 left-0 overflow-hidden modalSpinner hidden">
+        <section class="w-44 h-44 flex items-center justify-center bg-white rounded-xl spinner">
+            <div class="size-2/5 border-8 border-l-black border-black/30 rounded-full animate-spin"></div>
+        </section>
     </div>
 `
 
@@ -109,6 +120,18 @@ tplOrderContainer.innerHTML = `
         <span class="text-md text-black order-price">R$ 9,00</span>
     </div>
 `
+
+function placeOrder(app){
+    let modal = app.querySelector('.modalSpinner')
+    let spinner = modal.querySelector('.spinner')
+
+    modal.classList.remove('hidden')
+
+    setTimeout(()=>{
+        changeScreen()
+    }, 3000)
+
+}
 
 function renderOrderList(app){
     let orderList = app.querySelector(".order-list")
@@ -125,8 +148,8 @@ function renderOrderList(app){
     })
 }
 
-function showModal(app, data, limit=false){
-    let oldModal = app.querySelector('.modal')
+function showModalValue(app, data, limit=false){
+    let oldModal = app.querySelector('.modalInput')
     let modal = oldModal.cloneNode(true)
     oldModal.replaceWith(modal)
 
@@ -146,15 +169,18 @@ function showModal(app, data, limit=false){
 
             modalContainer.addEventListener('transitionend', ()=>{
                 modal.classList.add('hidden')
+                modalContainer.classList.add('hidden')
             }, {once:true})
 
             if(!settled){
                 settled = true
+
                 result === undefined ? reject('closed') : resolve(result)
             }
         }
 
         modal.classList.remove('hidden')
+        modalContainer.classList.remove('hidden')
 
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
@@ -230,12 +256,9 @@ async function applyPayment(app, type) {
     }
 
     try {
-        value = await showModal(app, data, totalPayablePrice)
+        value = await showModalValue(app, data, totalPayablePrice)
 
         value = parseFloat(value)
-
-        totalPriceOrder -= value
-        updateTotalPrice(app)
 
         totalPayablePrice -= value
         updatePayable(app)
@@ -263,13 +286,17 @@ async function applyPayment(app, type) {
                 paymentsList.innerHTML += element
             }
         })
+
+        if(totalPayablePrice == 0){
+            placeOrder(app)
+        }
     } catch (error) {
     }
 }
 
 async function applyAddition(app){
     try {
-        let value = await showModal(app, {
+        let value = await showModalValue(app, {
             title: "Aplicar acréscimo",
             subTitle: "Informe o valor adicional do pedido.",
             textButton: "Aplicar acréscimo"
@@ -288,7 +315,7 @@ async function applyAddition(app){
 
 async function applyDiscount(app){
     try {
-        let value = await showModal(app, {
+        let value = await showModalValue(app, {
             title: "Aplicar desconto",
             subTitle: "Informe o valor que será descontado do pedido.",
             textButton: "Aplicar desconto"
@@ -296,14 +323,15 @@ async function applyDiscount(app){
 
         value = parseFloat(value)
 
-        totalPriceOrder -= value
-        updateTotalPrice(app)
-
         totalPayablePrice -= value
         updatePayable(app)
 
         totalPaidPrice += value
         updatePaid(app)
+
+        if(totalPayablePrice == 0){
+            placeOrder(app)
+        }
     } catch (error) {
     }
 }
@@ -337,9 +365,11 @@ function updatePaid(app){
     paidPrice.textContent = `- ${formatCurrency(totalPaidPrice)}`
 }
 
-export async function renderPagamento(app){
+export function renderPagamento(app){
     let clone = tplPaymentPage.content.cloneNode(true)
     app.appendChild(clone)
+
+    let btnReturn = app.querySelector('.button-return')
 
     let totalItems = app.querySelector('.total-items')
 
@@ -368,27 +398,31 @@ export async function renderPagamento(app){
     updateTotalPrice(app)
     updatePayable(app)
 
-    btnDiscount.addEventListener('click', async ()=>{
-        if(totalPriceOrder > 0){
-            await applyDiscount(app)
+    btnReturn.addEventListener('click', ()=>{
+        changeScreen('produtos')
+    })
+
+    btnDiscount.addEventListener('click', ()=>{
+        if(totalPayablePrice > 0){
+            applyDiscount(app)
         }
     })
 
-    btnAddition.addEventListener('click', async ()=>{
-        await applyAddition(app)
+    btnAddition.addEventListener('click', ()=>{
+        applyAddition(app)
     })
 
     btnPayments.forEach(async (button) => {
-        button.addEventListener('click', async ()=>{
-            if(totalPriceOrder > 0){
+        button.addEventListener('click', ()=>{
+            if(totalPayablePrice > 0){
                 if(button.classList.contains('debit')){
-                    await applyPayment(app, 'debito')
+                    applyPayment(app, 'debito')
                 }else if(button.classList.contains('credit')){
-                    await applyPayment(app, 'credito')
+                    applyPayment(app, 'credito')
                 }else if(button.classList.contains('pix')){
-                    await applyPayment(app, 'pix')
+                    applyPayment(app, 'pix')
                 }else if(button.classList.contains('cash')){
-                    await applyPayment(app, 'dinheiro')
+                    applyPayment(app, 'dinheiro')
                 }
             }
         })
