@@ -6,6 +6,8 @@ var totalPriceOrder = 0;
 var totalPayablePrice = 0;
 var totalPaidPrice = 0;
 
+var paymentsMethods = []
+
 const tplPaymentPage = document.createElement('template')
 tplPaymentPage.innerHTML = `
     <header class="shrink-0 flex flex-row gap-2 border-b-2 border-[#E5E5E5] py-6 px-6">
@@ -61,20 +63,17 @@ tplPaymentPage.innerHTML = `
         </div>
         <div class="flex flex-col gap-2 registered-payment-container hidden">
             <span class="text-[#737373] font-bold">Pagamentos registrados</span>
-            <div class="flex flex-row justify-between border border-[#E5E5E5] rounded-xl p-4">
-                <span>Dinheiro</span>
-                <span>R$ 2,00</span>
-            </div>
+            <div class="w-full flex flex-col gap-2 payments-list"></div>
         </div>
         <div class="flex flex-col gap-4 pb-6 payment-method">
             <div>
                 <span class="font-bold">Forma de pagamento</span>
             </div>
             <div class="grid grid-cols-2 gap-2">
-                <span class="w-full flex items-center justify-center bg-black text-xl text-white font-bold p-6 rounded-lg active:bg-black/85">Dinheiro</span>
-                <span class="w-full flex items-center justify-center bg-black text-white font-bold p-6 rounded-lg active:bg-black/85">Débito</span>
-                <span class="w-full flex items-center justify-center bg-black text-white text-xl font-bold p-6 rounded-lg active:bg-black/85">Crédito</span>
-                <span class="w-full flex items-center justify-center bg-black text-white text-xl font-bold p-6 rounded-lg active:bg-black/85">Pix</span>
+                <span class="w-full flex items-center justify-center bg-black text-xl text-white font-bold p-6 rounded-lg active:bg-black/85 btn-payment cash">Dinheiro</span>
+                <span class="w-full flex items-center justify-center bg-black text-white font-bold p-6 rounded-lg active:bg-black/85 btn-payment debit">Débito</span>
+                <span class="w-full flex items-center justify-center bg-black text-white text-xl font-bold p-6 rounded-lg active:bg-black/85 btn-payment credit">Crédito</span>
+                <span class="w-full flex items-center justify-center bg-black text-white text-xl font-bold p-6 rounded-lg active:bg-black/85 btn-payment pix">Pix</span>
             </div>
         </div>
     </footer>
@@ -199,11 +198,7 @@ function showModal(app, data, limit=false){
         modalButton.addEventListener('click', ()=>{
             let value = modalInput.value
 
-            console.log('clicado')
-            console.log(value)
-
             if(value !== ""){
-                console.log('nao vazio')
                 if(limit && value <= limit){
                     fncCloseModal(value)
                     modalInput.value = ""
@@ -219,40 +214,127 @@ function showModal(app, data, limit=false){
     })
 }
 
-function updatePayable(app){
-    let payablePriceElement = app.querySelector('.payable-price')
-    let priceFormat = totalPayablePrice.toLocaleString('pt-BR', {
+async function applyPayment(app, type) {
+    let registeredPaymentContainer = app.querySelector('.registered-payment-container')
+    let paymentsList = app.querySelector('.payments-list')
+
+    let value;
+    let nameFormat = (str)=>{
+        return str[0].toUpperCase() + str.slice(1)
+    }
+
+    let data = {
+        title: `Receber via ${nameFormat(type)}`,
+        subTitle: `Saldo restante: ${formatCurrency(totalPayablePrice)}.`,
+        textButton: 'Confirmar pagamento'
+    }
+
+    try {
+        value = await showModal(app, data, totalPayablePrice)
+
+        value = parseFloat(value)
+
+        totalPriceOrder -= value
+        updateTotalPrice(app)
+
+        totalPayablePrice -= value
+        updatePayable(app)
+
+        totalPaidPrice += value
+        updatePaid(app)
+
+        registeredPaymentContainer.classList.remove('hidden')
+
+        paymentsList.innerHTML = ''
+
+        paymentsMethods.forEach((method)=>{
+            if(method.name == type){
+                method.price += value
+            }
+
+            if(method.price > 0){
+                let element = `
+                    <div class="flex flex-row justify-between border border-[#E5E5E5] rounded-xl px-4 py-3">
+                        <span>${nameFormat(method.name)}</span>
+                        <span>${formatCurrency(method.price)}</span>
+                    </div>
+                `
+
+                paymentsList.innerHTML += element
+            }
+        })
+    } catch (error) {
+    }
+}
+
+async function applyAddition(app){
+    try {
+        let value = await showModal(app, {
+            title: "Aplicar acréscimo",
+            subTitle: "Informe o valor adicional do pedido.",
+            textButton: "Aplicar acréscimo"
+        })
+
+        value = parseFloat(value)
+
+        totalPriceOrder += value
+        updateTotalPrice(app)
+
+        totalPayablePrice += value
+        updatePayable(app)
+    } catch (error) {
+    }
+}
+
+async function applyDiscount(app){
+    try {
+        let value = await showModal(app, {
+            title: "Aplicar desconto",
+            subTitle: "Informe o valor que será descontado do pedido.",
+            textButton: "Aplicar desconto"
+        }, totalPayablePrice)
+
+        value = parseFloat(value)
+
+        totalPriceOrder -= value
+        updateTotalPrice(app)
+
+        totalPayablePrice -= value
+        updatePayable(app)
+
+        totalPaidPrice += value
+        updatePaid(app)
+    } catch (error) {
+    }
+}
+
+function formatCurrency(value){
+    return value.toLocaleString('pt-BR', {
         style: 'currency',
         currency: 'BRL',
         minimumFractionDigits: 2
     })
+}
 
-    payablePriceElement.textContent = `${priceFormat}`
+function updatePayable(app){
+    let payablePriceElement = app.querySelector('.payable-price')
+
+    payablePriceElement.textContent = `${formatCurrency(totalPayablePrice)}`
 }
 
 function updateTotalPrice(app){
     let totalPriceElement = app.querySelector('.total-price')
-    let priceFormat = totalPriceOrder.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-        minimumFractionDigits: 2
-    })
 
-    totalPriceElement.textContent = `${priceFormat}`
+    totalPriceElement.textContent = `${formatCurrency(totalPriceOrder)}`
 }
 
 function updatePaid(app){
     let paidContainer = app.querySelector('.paid-container')
     let paidPrice = app.querySelector('.paid-price')
-    let priceFormat = totalPaidPrice.toLocaleString('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
-        minimumFractionDigits: 2
-    })
 
     paidContainer.classList.contains('hidden') ? paidContainer.classList.remove('hidden') : undefined
 
-    paidPrice.textContent = `- ${priceFormat}`
+    paidPrice.textContent = `- ${formatCurrency(totalPaidPrice)}`
 }
 
 export async function renderPagamento(app){
@@ -260,11 +342,15 @@ export async function renderPagamento(app){
     app.appendChild(clone)
 
     let totalItems = app.querySelector('.total-items')
+
     let totalPrice = app.querySelector('.total-price')
     let subTotalPrice = app.querySelector('.sub-total-price')
     let payablePrice = app.querySelector('.payable-price')
+
     let btnDiscount = app.querySelector('.btn-discount')
     let btnAddition = app.querySelector('.btn-addition')
+
+    let btnPayments = app.querySelectorAll('.btn-payment')
 
     forItensCart((item)=>{
         totalItemsCart += item.quant
@@ -284,46 +370,29 @@ export async function renderPagamento(app){
 
     btnDiscount.addEventListener('click', async ()=>{
         if(totalPriceOrder > 0){
-            try {
-                let value = await showModal(app, {
-                    title: "Aplicar desconto",
-                    subTitle: "Informe o valor que será descontado do pedido.",
-                    textButton: "Aplicar desconto"
-                }, totalPayablePrice)
-
-                value = parseFloat(value)
-
-                totalPriceOrder -= value
-                updateTotalPrice(app)
-
-                totalPayablePrice -= value
-                updatePayable(app)
-
-                totalPaidPrice += value
-                updatePaid(app)
-            } catch (error) {
-            }
+            await applyDiscount(app)
         }
     })
 
     btnAddition.addEventListener('click', async ()=>{
-        try {
-            let value = await showModal(app, {
-                title: "Aplicar acréscimo",
-                subTitle: "Informe o valor adicional do pedido.",
-                textButton: "Aplicar acréscimo"
-            })
-
-            value = parseFloat(value)
-
-            totalPriceOrder += value
-            updateTotalPrice(app)
-
-            totalPayablePrice += value
-            updatePayable(app)
-        } catch (error) {
-        }
+        await applyAddition(app)
     })
+
+    btnPayments.forEach(async (button) => {
+        button.addEventListener('click', async ()=>{
+            if(totalPriceOrder > 0){
+                if(button.classList.contains('debit')){
+                    await applyPayment(app, 'debito')
+                }else if(button.classList.contains('credit')){
+                    await applyPayment(app, 'credito')
+                }else if(button.classList.contains('pix')){
+                    await applyPayment(app, 'pix')
+                }else if(button.classList.contains('cash')){
+                    await applyPayment(app, 'dinheiro')
+                }
+            }
+        })
+    });
 
     renderOrderList(app)
 }
