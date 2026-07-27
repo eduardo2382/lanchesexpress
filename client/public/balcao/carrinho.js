@@ -6,19 +6,13 @@ export function addCart(item, quantItem=false){
     let itemCart = cart.itens.find((i) => i.nome == item.nome)
 
     if(itemCart){
-        console.log(quantItem)
-            
         quantItem ? itemCart.quant += quantItem : itemCart.quant++
-        console.log(cart.itens)
         return
     }
 
 
     item.quant = quantItem ? quantItem : 1
     cart.itens.push(item)
-
-    console.log(quantItem)
-    console.log(cart.itens)
 }
 
 export function remCart(item, all=false){
@@ -33,8 +27,6 @@ export function remCart(item, all=false){
             all ? cart.itens = cart.itens.filter(item => item != itemCart) : undefined
         }
     })
-
-    console.log(cart.itens)
 }
 
 export function getQuantCart(item){

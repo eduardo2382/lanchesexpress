@@ -10,6 +10,8 @@
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --color-red-200: oklch(88.5% 0.062 18.334);
+    --color-red-500: oklch(63.7% 0.237 25.331);
+    --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -430,6 +432,9 @@
   .border-black {
     border-color: var(--color-black);
   }
+  .border-red-500 {
+    border-color: var(--color-red-500);
+  }
   .border-transparent {
     border-color: transparent;
   }
@@ -444,6 +449,9 @@
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-black) 40%, transparent);
     }
+  }
+  .bg-red-500 {
+    background-color: var(--color-red-500);
   }
   .bg-white {
     background-color: var(--color-white);
@@ -489,6 +497,9 @@
   }
   .py-8 {
     padding-block: calc(var(--spacing) * 8);
+  }
+  .pb-6 {
+    padding-bottom: calc(var(--spacing) * 6);
   }
   .align-bottom {
     vertical-align: bottom;
@@ -579,6 +590,22 @@
   .duration-300 {
     --tw-duration: 300ms;
     transition-duration: 300ms;
+  }
+  .outline-none {
+    --tw-outline-style: none;
+    outline-style: none;
+  }
+  .focus\:border-black:focus {
+    border-color: var(--color-black);
+  }
+  .focus\:border-blue-500:focus {
+    border-color: var(--color-blue-500);
+  }
+  .focus\:border-red-500:focus {
+    border-color: var(--color-red-500);
+  }
+  .focus\:outline-red-500:focus {
+    outline-color: var(--color-red-500);
   }
   .active\:scale-95:active {
     --tw-scale-x: 95%;
