@@ -128,7 +128,7 @@ function placeOrder(app){
     modal.classList.remove('hidden')
 
     setTimeout(()=>{
-        changeScreen()
+        changeScreen('confirmacao', totalPriceOrder)
     }, 3000)
 
 }

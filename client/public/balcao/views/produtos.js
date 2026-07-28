@@ -486,6 +486,8 @@ export async function renderPedido(app){
     let clone = tplOrdersPage.content.cloneNode(true)
     let btnCart;
     let modal;
+
+    currentCategory = categories[0]
     
     app.innerHTML = ''
     app.appendChild(clone)

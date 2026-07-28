@@ -1,4 +1,4 @@
-export const cart = {
+const cart = {
     itens: []
 }
 
@@ -51,4 +51,8 @@ export function forItensCart(func){
     cart.itens.forEach((item)=>{
         func(item)
     })
+}
+
+export function cleanCart(){
+    cart.itens = []
 }
