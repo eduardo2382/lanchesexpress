@@ -40,6 +40,30 @@ class CategoriaController {
             return res.status(400).json({'error': error.message})
         }
     }
+
+    update = async (req, res) => {
+        let id = req.params.id
+
+        try{
+            let updatedCategoria = await this.#service.updateCategoria(id, req.body)
+
+            return res.status(200).json(updatedCategoria)
+        }catch(error){
+            return res.status(400).json({ error: error.message})
+        }
+    }
+
+    delete = async (req, res) => {
+        console.log('controler')
+
+        try{
+            let deletedCategoria = await this.#service.deleteCategoria(req.params.id)
+
+            return res.status(200).json(deletedCategoria)
+        }catch(error){
+            return res.status(400).json({error: error.message})
+        }
+    }
 }
 
 module.exports = CategoriaController

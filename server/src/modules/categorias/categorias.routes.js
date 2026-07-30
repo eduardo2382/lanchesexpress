@@ -9,4 +9,8 @@ route.post('/', controller.create)
 route.get('/', controller.findAll)
 route.get('/:id', controller.findById)
 
+route.patch('/:id', controller.update)
+
+route.delete('/:id', controller.delete)
+
 module.exports = route

@@ -40,6 +40,39 @@ class CategoriaService {
 
         return categoria.length != 0
     }
+
+    async updateCategoria(id, body){
+        if(id == undefined){ throw new Error('Id faltando') }
+
+        if(!this.existsCategoria(id)){ throw new Error('Categoria não encontrada!') }
+
+        if(Object.keys(body).length == 0){ throw new Error('Nenhum campo para atualizar!') }
+
+        if(body.nome != undefined){
+            let existsNome = await this.#repository.findByName(body.nome)
+
+            if(existsNome.length > 0){ throw new Error('Ja existe uma categoria com esse nome!') }
+        }
+
+        let updatedCategoria = await this.#repository.update(id, body)
+
+        return updatedCategoria
+    }
+
+    async deleteCategoria(id){
+        let categoriaExists = await this.#repository.findById(id)
+
+        if(categoriaExists.length == 0){ throw new Error('Categoria não encontrada!') }
+
+        if(categoriaExists[0].ativo == false){throw new Error('Categoria ja destivada!')}
+
+        if(id == undefined){ throw new Error('Id faltando!') }
+
+        let deletedCategoria = await this.#repository.delete(id)
+
+
+        return deletedCategoria
+    }
 }
 
 module.exports = CategoriaService

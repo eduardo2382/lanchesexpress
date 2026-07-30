@@ -24,6 +24,43 @@ class CategoriaRepository {
 
         return result.rows
     }
+
+    async update(id, body){
+        console.log("repository")
+        
+        let campos = []
+        let values = []
+        let index = 1
+
+        if(body.nome != undefined){
+            campos.push(`nome = $${index}`)
+            values.push(body.nome)
+            index++
+        }
+
+        if(body.ativo != undefined){
+            campos.push(`ativo = $${index}`)
+            values.push(body.ativo)
+            index++
+        }
+
+        values.push(id)
+
+        let query = `UPDATE categorias SET ${campos.join(', ')} WHERE id = $${index} RETURNING *`
+
+        let result = await pool.query(query, values)
+
+        return result.rows
+    }
+
+    async delete(id){
+        console.log("repository")
+
+        let result = await pool.query("UPDATE categorias SET ativo = false WHERE id = $1 RETURNING *", [id])
+
+        return result.rows
+    }
+
 }
 
 module.exports = CategoriaRepository
