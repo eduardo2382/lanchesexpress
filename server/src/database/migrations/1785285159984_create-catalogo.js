@@ -8,15 +8,15 @@ export const up = (pgm) => {
     pgm.createTable('insumos', {
         id: 'id',
         nome: { type: 'varchar(50)', notNull: true },
+        tipo_medida: { type: 'varchar(20)', check: "tipo_medida IN ('unidade', 'peso', 'volume')", notNull: true },
+        quantidade_atual: {type: 'decimal(10,3)', notNull: true, default: 0},
+        quantidade_minima: {type: 'decimal(10,3)', notNull: true, default: 0},
         ativo: {type: 'boolean', notNull: true, default: true}
     });
 
     pgm.createTable('atributos', {
         id: 'id',
-        nome: { type: 'varchar(100)', notNull: true },
-        tipo_medida: { type: 'varchar(20)', check: "tipo_medida IN ('unidade', 'peso', 'volume')", notNull: true },
-        quantidade_atual: {type: 'integer', notNull: true, default: 0},
-        quantidade_minima: {type: 'integer', notNull: true, default: 0},
+        nome: { type: 'varchar(50)', notNull: true },
         ativo: {type: 'boolean', notNull: true, default: true}
     });
 
@@ -29,6 +29,7 @@ export const up = (pgm) => {
         preco_base: { type: 'decimal(10,2)', notNull: true, default: 0 },
         vai_para_cozinha: { type: 'boolean', notNull: true, default: true },
         ativo: { type: 'boolean', notNull: true, default: true },
+        criado_em: {type: 'timestamp', default: pgm.func('current_timestamp')}
     });
    
     pgm.createTable('produto_insumos', {
@@ -40,7 +41,7 @@ export const up = (pgm) => {
     pgm.createTable('produto_atributos', {
         produto_id: {type: 'integer', references: 'produtos'},
         atributo_id: {type: 'integer', references: 'atributos'},
-        quantidade: {type: 'integer', check: "quantidade > 0", notNull: true}
+        valor: {type: 'varchar(100)', notNull: true}
     });
 
     pgm.createTable('opcoes', {
@@ -59,6 +60,8 @@ export const up = (pgm) => {
         tipo_preco: {type: 'varchar(20)', check: "tipo_preco IN ('soma', 'nao_aplica')", notNull: true}
     })
 
+    pgm.addConstraint('grupos_opcoes', 'constraint_unica_produtoId_nome', 'UNIQUE(produto_id, nome)');
+
     pgm.createTable('grupo_opcao_itens', {
         id: 'id',
         grupo_id: {type: 'integer', references: 'grupos_opcoes'},
@@ -66,10 +69,12 @@ export const up = (pgm) => {
         preco: {type: "decimal(10,2)"}
     })
 
+    pgm.addConstraint('grupo_opcao_itens', 'constraint_unica_grupoId_opcaoId', 'UNIQUE(grupo_id, opcao_id)');
+
     pgm.createTable('grupo_opcao_item_insumos', {
         grupo_opcao_item_id: {type: 'integer', references: 'grupo_opcao_itens'},
         insumo_id: {type: 'integer', references: 'insumos'},
-        quantidade: {type: 'integer', notNull: true}
+        quantidade: {type: 'decimal(10,3)', notNull: true}
     });
 };
 
