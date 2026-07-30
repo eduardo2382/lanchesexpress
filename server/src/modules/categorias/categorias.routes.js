@@ -1,12 +1,12 @@
 const { Router } = require('express')
 const CategoriaController = require('./categorias.controller.js')
 
-const categoriaRoutes = Router()
+const route = Router()
 const controller = new CategoriaController();
 
-categoriaRoutes.post('/', controller.create)
+route.post('/', controller.create)
 
-categoriaRoutes.get('/', controller.findAll)
-categoriaRoutes.get('/:name', controller.findByName)
+route.get('/', controller.findAll)
+route.get('/:id', controller.findById)
 
-module.exports = categoriaRoutes
+module.exports = route

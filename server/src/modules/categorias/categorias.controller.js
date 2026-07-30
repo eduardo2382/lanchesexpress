@@ -19,11 +19,11 @@ class CategoriaController {
         }
     }   
 
-    findByName = async (req, res) => {
+    findById = async (req, res) => {
         try{
-            let { nome } = req.params
+            let { id } = req.params
 
-            let categoria = await this.#service.findByNameCategoria(nome)
+            let categoria = await this.#service.findByIdCategoria(id)
 
             return res.status(200).json(categoria)
         }catch(error){

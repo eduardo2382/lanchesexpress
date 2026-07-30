@@ -19,8 +19,8 @@ class CategoriaService {
         return createdCategoria
     }
 
-    async findByNameCategoria(nome){
-        let categoria = await this.#repository.findByName(nome)
+    async findByIdCategoria(id){
+        let categoria = await this.#repository.findById(id)
 
         if(categoria.length == 0){
             throw new Error('Categoria nao encotrada')
@@ -33,6 +33,12 @@ class CategoriaService {
         let allCategorias = await this.#repository.findAll()
 
         return allCategorias
+    }
+
+    async existsCategoria(id){
+        let categoria = await this.#repository.findById(id)
+
+        return categoria.length != 0
     }
 }
 

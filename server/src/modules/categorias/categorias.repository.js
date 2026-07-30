@@ -19,7 +19,11 @@ class CategoriaRepository {
         return result.rows
     }
 
-    
+    async findById(id){
+        let result = await pool.query("SELECT * FROM categorias WHERE id = $1", [id])
+
+        return result.rows
+    }
 }
 
 module.exports = CategoriaRepository
