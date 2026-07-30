@@ -54,8 +54,6 @@ class CategoriaController {
     }
 
     delete = async (req, res) => {
-        console.log('controler')
-
         try{
             let deletedCategoria = await this.#service.deleteCategoria(req.params.id)
 

@@ -25,9 +25,7 @@ class CategoriaRepository {
         return result.rows
     }
 
-    async update(id, body){
-        console.log("repository")
-        
+    async update(id, body){        
         let campos = []
         let values = []
         let index = 1
@@ -54,8 +52,6 @@ class CategoriaRepository {
     }
 
     async delete(id){
-        console.log("repository")
-
         let result = await pool.query("UPDATE categorias SET ativo = false WHERE id = $1 RETURNING *", [id])
 
         return result.rows
