@@ -6,6 +6,11 @@ export const up = (pgm) => {
 
     pgm.createTable('insumos', {
         id: 'id',
+        nome: { type: 'varchar(50)', notNull: true }
+    });
+
+    pgm.createTable('atributos', {
+        id: 'id',
         nome: { type: 'varchar(100)', notNull: true },
         tipo_medida: { type: 'varchar(20)', check: "tipo_medida IN ('unidade', 'peso', 'volume')", notNull: true },
         quantidade_atual: {type: 'integer', notNull: true, default: 0},
@@ -14,9 +19,10 @@ export const up = (pgm) => {
 
     pgm.createTable('produtos', {
         id: 'id',
+        produto_pai_id: {type: 'integer', references: 'produtos', default: null},
         categoria_id: { type: 'integer', references: 'categorias', onDelete: 'SET NULL' },
         nome: { type: 'varchar(150)', notNull: true },
-        tipo: { type: 'varchar(20)', check: "tipo IN ('simples', 'montavel')", notNull: true },
+        tipo: { type: 'varchar(20)', check: "tipo IN ('simples', 'montavel', 'variavel')", notNull: true },
         preco_base: { type: 'decimal(10,2)', notNull: true, default: 0 },
         vai_para_cozinha: { type: 'boolean', notNull: true, default: true },
         ativo: { type: 'boolean', notNull: true, default: true },
@@ -25,6 +31,12 @@ export const up = (pgm) => {
     pgm.createTable('produto_insumos', {
         produto_id: {type: 'integer', references: 'produtos'},
         insumo_id: {type: 'integer', references: 'insumos'},
+        quantidade: {type: 'integer', check: "quantidade > 0", notNull: true}
+    });
+    
+    pgm.createTable('produto_atributos', {
+        produto_id: {type: 'integer', references: 'produtos'},
+        atributo_id: {type: 'integer', references: 'atributos'},
         quantidade: {type: 'integer', check: "quantidade > 0", notNull: true}
     });
 
@@ -63,8 +75,10 @@ exports.down = (pgm) => {
   pgm.dropTable('grupo_opcao_itens');
   pgm.dropTable('grupos_opcoes');
   pgm.dropTable('opcoes');
+  pgm.dropTable('produto_atributos');
   pgm.dropTable('produto_insumos');
   pgm.dropTable('produtos');
   pgm.dropTable('insumos');
+  pgm.dropTable('atributos');
   pgm.dropTable('categorias');
 };
