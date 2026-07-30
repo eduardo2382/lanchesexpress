@@ -1,12 +1,14 @@
 export const up = (pgm) => {
     pgm.createTable('categorias', {
         id: 'id',
-        nome: { type: 'varchar(100)', notNull: true }
+        nome: { type: 'varchar(100)', notNull: true },
+        ativo: {type: 'boolean', notNull: true, default: true}
     });
 
     pgm.createTable('insumos', {
         id: 'id',
-        nome: { type: 'varchar(50)', notNull: true }
+        nome: { type: 'varchar(50)', notNull: true },
+        ativo: {type: 'boolean', notNull: true, default: true}
     });
 
     pgm.createTable('atributos', {
@@ -14,7 +16,8 @@ export const up = (pgm) => {
         nome: { type: 'varchar(100)', notNull: true },
         tipo_medida: { type: 'varchar(20)', check: "tipo_medida IN ('unidade', 'peso', 'volume')", notNull: true },
         quantidade_atual: {type: 'integer', notNull: true, default: 0},
-        quantidade_minima: {type: 'integer', notNull: true, default: 0}
+        quantidade_minima: {type: 'integer', notNull: true, default: 0},
+        ativo: {type: 'boolean', notNull: true, default: true}
     });
 
     pgm.createTable('produtos', {
@@ -43,7 +46,8 @@ export const up = (pgm) => {
     pgm.createTable('opcoes', {
         id: 'id',
         nome: {type: 'varchar(100)', notNull: true},
-        tipo: {type: 'varchar(20)', check: "tipo IN ('escolha', 'porcao')", notNull: true}
+        tipo: {type: 'varchar(20)', check: "tipo IN ('escolha', 'porcao')", notNull: true},
+        ativo: {type: 'boolean', notNull: true, default: true}
     })
 
     pgm.createTable('grupos_opcoes', {
