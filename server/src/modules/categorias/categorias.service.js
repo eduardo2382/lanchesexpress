@@ -7,20 +7,20 @@ class CategoriaService {
         this.#repository = new CategoriaRepository()
     }
 
-    async createCategoria(name){
-        let categoriaExists = await this.#repository.findByName(name)
+    async createCategoria(nome){
+        let categoriaExists = await this.#repository.findByName(nome)
 
         if(categoriaExists.length != 0){
             throw new Error('Categoria ja cadastrada')
         }
 
-        let createdCategoria = await this.#repository.save(name)
+        let createdCategoria = await this.#repository.save(nome)
 
         return createdCategoria
     }
 
-    async findByNameCategoria(name){
-        let categoria = await this.#repository.findByName(name)
+    async findByNameCategoria(nome){
+        let categoria = await this.#repository.findByName(nome)
 
         if(categoria.length == 0){
             throw new Error('Categoria nao encotrada')

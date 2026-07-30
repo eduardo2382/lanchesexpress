@@ -9,11 +9,11 @@ class CategoriaController {
 
     create = async (req, res) => {
         try{
-            let { name } = req.body 
+            let { nome } = req.body 
 
-            let newCategoria = await this.#service.createCategoria(name)
+            let createdCategoria = await this.#service.createCategoria(nome)
 
-            return res.status(201).send(newCategoria)
+            return res.status(201).send(createdCategoria)
         }catch(error){
             return res.status(400).json({error: error.message})
         }
@@ -21,9 +21,9 @@ class CategoriaController {
 
     findByName = async (req, res) => {
         try{
-            let { name } = req.params
+            let { nome } = req.params
 
-            let categoria = await this.#service.findByNameCategoria(name)
+            let categoria = await this.#service.findByNameCategoria(nome)
 
             return res.status(200).json(categoria)
         }catch(error){

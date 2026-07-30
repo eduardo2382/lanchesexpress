@@ -1,6 +1,6 @@
 const { Router } = require('express')
 
-const categoriaRoutes = require('./produtos/categorias.routes.js')
+const categoriaRoutes = require('./categorias/categorias.routes.js')
 
 const routes = Router()
 
