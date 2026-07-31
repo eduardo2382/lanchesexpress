@@ -66,6 +66,69 @@ class InsumoService {
 
         return await this.#repository.delete(id)
     }
+
+    async ajustInsumo(id, body){
+        let { tipo, motivo, quantidade } = body
+        let delta;
+        let updatedInsumo;
+
+        if(id == undefined){ throw new Error('Id do insumo faltando!') }
+
+        let insumo = await this.#repository.findById(id)
+        let quantidadeAtual = Number(insumo[0].quantidade_atual)
+
+        if(tipo == undefined){ throw new Error('Tipo da movimentacao faltando!') }
+
+        if(motivo == undefined){ throw new Error('Motivo da movimentacao faltando!') }
+
+        if(motivo == 'venda'){ throw new Error('Motivo invalido!')}
+
+        if(quantidade == undefined){ throw new Error('Quantidade da movimentacao faltando!') }
+
+        switch (tipo) {
+            case 'ajuste':
+                delta = quantidade - quantidadeAtual
+                
+                updatedInsumo = await this.#repository.ajust(id, delta, {
+                    tipo, 
+                    motivo,
+                    movimentacao_quantidade: delta
+                })
+                
+                break;
+
+            case 'entrada':
+                delta = +quantidade
+
+                updatedInsumo = await this.#repository.ajust(id, delta, {
+                    tipo,
+                    motivo,
+                    movimentacao_quantidade: quantidade
+                })
+
+                break
+
+            case 'saida':
+                delta = -quantidade
+
+                let newQuantidadeAtual = quantidadeAtual + delta
+
+                if(newQuantidadeAtual < 0){ throw new Error('Valor de saida maior que a quantidade atual do insumo!') }
+
+                updatedInsumo = await this.#repository.ajust(id, delta, {
+                    tipo,
+                    motivo,
+                    movimentacao_quantidade: quantidade
+                })
+
+                break
+        
+            default:
+                break;
+        }
+
+        return updatedInsumo
+    }
 }
 
 

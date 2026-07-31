@@ -1,6 +1,13 @@
 const pool = require('../../database/connection.js')
+const MovimentacaoRepository = require('../estoque/movimentacoes.repository.js')
 
 class InsumoRepository{
+    #movimentacaoRepository
+
+    constructor(){
+        this.#movimentacaoRepository = new MovimentacaoRepository()
+    }
+
     async save({nome, tipo_medida, quantidade_atual, quantidade_minima}){
         let text = "INSERT INTO insumos(nome, tipo_medida, quantidade_atual, quantidade_minima) VALUES ($1, $2, $3, $4) RETURNING *"
         let values = [nome, tipo_medida, quantidade_atual, quantidade_minima]
@@ -51,6 +58,24 @@ class InsumoRepository{
             index++
         }
 
+        if(body.tipo_medida != undefined){
+            campos.push(`tipo_medida = $${index}`)
+            values.push(body.tipo_medida)
+            index++
+        }
+
+        if(body.quantidade_atual != undefined){
+            campos.push(`quantidade_atual = $${index}`)
+            values.push(body.quantidade_atual)
+            index++
+        }
+
+        if(body.quantidade_minima != undefined){
+            campos.push(`quantidade_minima = $${index}`)
+            values.push(body.quantidade_minima)
+            index++
+        }
+
         if(body.ativo != undefined){
             campos.push(`ativo = $${index}`)
             values.push(body.ativo)
@@ -70,6 +95,27 @@ class InsumoRepository{
         let result = await pool.query("UPDATE insumos SET ativo = false WHERE id = $1 RETURNING *", [id])
 
         return result.rows
+    }
+
+    async ajust(id, delta, body){
+        const client = await pool.connect()
+
+        try{
+            await client.query('BEGIN')
+
+            let insumo = await client.query('UPDATE insumos SET quantidade_atual = quantidade_atual + $1 WHERE id = $2 RETURNING *', [delta, id])
+
+            await this.#movimentacaoRepository.save(client, id, delta, body)
+
+            await client.query('COMMIT')
+
+            return insumo.rows
+        }catch(error){
+            await client.query('ROLLBACK')
+            throw error
+        }finally{
+            client.release()
+        }
     }
 }
 

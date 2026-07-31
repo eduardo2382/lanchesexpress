@@ -70,6 +70,18 @@ class InsumoController {
             return res.status(400).json({ error: error.message })
         }
     }
+
+    ajust = async (req, res) => {
+        try{
+            let id = req.params.id
+
+            let ajustedInsumo = await this.#service.ajustInsumo(id, req.body)
+
+            return res.status(200).json(ajustedInsumo)
+        }catch(error){
+            return res.status(400).json({ error: error.message })
+        }
+    }
 }
 
 module.exports = InsumoController

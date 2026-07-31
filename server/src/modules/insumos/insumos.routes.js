@@ -9,6 +9,7 @@ route.get('/baixo-estoque', controller.findBellow)
 route.get('/:id', controller.findById)
 
 route.post('/', controller.create)
+route.post('/:id/ajuste', controller.ajust)
 
 route.patch('/:id', controller.update)
 
