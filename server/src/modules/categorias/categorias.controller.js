@@ -42,9 +42,9 @@ class CategoriaController {
     }
 
     update = async (req, res) => {
-        let id = req.params.id
-
         try{
+            let id = req.params.id
+
             let updatedCategoria = await this.#service.updateCategoria(id, req.body)
 
             return res.status(200).json(updatedCategoria)
