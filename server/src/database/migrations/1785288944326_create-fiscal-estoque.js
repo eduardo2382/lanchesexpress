@@ -16,7 +16,7 @@ export const up = (pgm) => {
         insumo_id: {type: 'integer', references: 'insumos', notNull: true},
         tipo: {type: 'varchar(20)', check: "tipo IN ('entrada', 'saida', 'ajuste')", notNull: true},
         quantidade: {type: 'decimal(10,3)', notNull: true},
-        motivo: {type: 'varchar(30)', check: "tipo IN ('venda', 'compra', 'perda', 'ajuste_manual')"},
+        motivo: {type: 'varchar(30)', check: "motivo IN ('venda', 'compra', 'perda', 'ajuste_manual')"},
         pedido_id: {type: 'integer', references: 'pedidos', default: null},
         criado_em: {type: 'timestamp', default: pgm.func('current_timestamp')}
     })
