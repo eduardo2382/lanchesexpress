@@ -1,0 +1,18 @@
+const { Router } = require('express')
+const InsumoController = require('./insumos.controller.js')
+
+const route = Router()
+const controller = new InsumoController()
+
+route.get('/', controller.findAll)
+route.get('/baixo-estoque', controller.findBellow)
+route.get('/:id', controller.findById)
+
+route.post('/', controller.create)
+
+route.patch('/:id', controller.update)
+
+route.delete('/:id', controller.delete)
+
+module.exports = route
+ 

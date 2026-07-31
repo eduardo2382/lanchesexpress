@@ -54,9 +54,7 @@ class CategoriaService {
             if(existsNome.length > 0){ throw new Error('Ja existe uma categoria com esse nome!') }
         }
 
-        let updatedCategoria = await this.#repository.update(id, body)
-
-        return updatedCategoria
+        return updatedCategoria = await this.#repository.update(id, body)        
     }
 
     async deleteCategoria(id){
