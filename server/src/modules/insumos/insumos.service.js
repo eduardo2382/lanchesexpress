@@ -7,13 +7,20 @@ class InsumoService {
         this.#repository = new InsumoRepository()
     }
 
+    async existsInsumoId(id){
+        return (await this.#repository.findById(id)).length > 0
+    }
+
+    async existsInsumoNome(nome){
+        return (await this.#repository.findByName(nome)).length > 0
+    }
+
     async createInsumo(body){
         let { nome, tipo_medida } = body
-        let insumoExists = (await this.#repository.findByName(nome)).length > 0
 
         if(nome == undefined){ throw new Error('Nome faltando!') }
 
-        if(insumoExists){ throw new Error('Ja existe um insumo com esse nome!') }
+        if(await this.existsInsumoNome(nome)){ throw new Error('Ja existe um insumo com esse nome!') }
 
         if(tipo_medida == undefined){ throw new Error('Tipo de medida faltando!') }
 
@@ -34,11 +41,9 @@ class InsumoService {
     async findByIdInsumo(id){
         if(id == undefined){ throw new Error("Id faltando!") }
 
-        return await this.#repository.findById(id)
-    }
+        if(!(await this.existsInsumoId(id))){ throw new Error('Insumo nao encontrado')}
 
-    async existsInsumo(id){
-        return (await this.#repository.findById(id)).length > 0
+        return await this.#repository.findById(id)
     }
 
     async findBellowInsumos(){
@@ -48,21 +53,21 @@ class InsumoService {
     async updateInsumo(id, body){
         if(id == undefined){ throw new Error("Id faltando!") }
 
-        if(!this.existsInsumo(id)){ throw new Error('Insumo nao encontrado!') }
+        if(!(await this.existsInsumoId(id))){ throw new Error('Insumo nao encontrado')}
+
+        if(!(await this.existsInsumoId(id))){ throw new Error('Insumo nao encontrado!') }
 
         if(Object.keys(body).length == 0){ throw new Error('Nenhum campo para atualizar!') }
 
-        if(body.nome != undefined){
-            let existsInsumo = await this.#repository.findByName(body.nome)
-
-            if(existsInsumo.length != 0){ throw new Error('Ja existe um insumo com esse nome!') }
-        }
+        if(body.nome != undefined && (await this.existsInsumoNome(body.nome))){ throw new Error('Ja existe um insumo com esse nome!') }
 
         return await this.#repository.update(id, body)
     }
 
     async deleteInsumo(id){
         if(id == undefined){ throw new Error('Id faltando!') }
+
+        if(!(await this.existsInsumoId(id))){ throw new Error('Insumo nao encontrado!')}
 
         return await this.#repository.delete(id)
     }
@@ -73,6 +78,8 @@ class InsumoService {
         let updatedInsumo;
 
         if(id == undefined){ throw new Error('Id do insumo faltando!') }
+
+        if(!(await this.existsInsumoId(id))){ throw new Error('Insumo nao encontrado')}
 
         let insumo = await this.#repository.findById(id)
         let quantidadeAtual = Number(insumo[0].quantidade_atual)
