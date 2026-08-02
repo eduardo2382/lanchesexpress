@@ -1,4 +1,5 @@
 const InsumoRepository = require('./insumos.repository.js')
+const { ValidationError, ConflictError, NotFoundError, UnprocessableEntityError, InsufficientStockError } = require('../../error/AppError.js')
 
 class InsumoService {
     #repository
@@ -16,11 +17,11 @@ class InsumoService {
     }
 
     async createInsumo(body){
-        if(body.nome == undefined){ throw new Error('Nome do insumo faltando!') }
+        if(body.nome == undefined) throw new ValidationError('Nome do insumo faltando!', {campo: 'nome', motivo: 'obrigatorio'})
 
-        if(body.tipo_medida == undefined){ throw new Error('Tipo de medida do insumo faltando!') }
+        if(body.tipo_medida == undefined) throw new Error('Tipo de medida do insumo faltando!', {campo: 'tipo_medida', motivo: 'obrigatorio'})
 
-        if(await this.existsInsumoNome(body.nome)){ throw new Error('Ja existe um insumo com esse nome!') }
+        if(await this.existsInsumoNome(body.nome)) throw new ConflictError('Ja existe um insumo com esse nome!', {campo: 'nome'}) 
 
         let values = {
             nome: body.nome,
@@ -37,17 +38,17 @@ class InsumoService {
         let statusQuery = query.status ? query.status.split(',') : ['ativo']
 
         let statusInvalid = statusQuery.filter((s) => !statusList.includes(s))
-        if(statusInvalid.length > 0){ throw new Error(`Status invalido: ${statusInvalid.join(', ')}`) }
+        if(statusInvalid.length > 0) throw new ValidationError(`Status invalido: ${statusInvalid.join(', ')}`, {campo: 'status', motivo: 'invalido'})
 
         return await this.#repository.findAll(statusQuery)
     }
 
     async findByIdInsumo(id){
-        if(id == undefined){ throw new Error("Id faltando!") }
+        if(id == undefined) throw new ValidationError("Id faltando!", {campo: 'id', motivo: 'obrigatorio'})
 
         let insumo = (await this.#repository.findById(id))[0]
 
-        if(!insumo){ throw new Error('Insumo nao encontrado')}
+        if(!insumo) throw new NotFoundError('Insumo nao encontrado')
 
         return insumo
     }
@@ -57,36 +58,36 @@ class InsumoService {
         let statusQuery = query.status ? query.status.split(',') : ['ativo']
 
         let statusInvalid = statusQuery.filter((s) => !statusList.includes(s))
-        if(statusInvalid.length > 0){ throw new Error(`Status invalido: ${statusInvalid.join(', ')}`) }
+        if(statusInvalid.length > 0) throw new ValidationError(`Status invalido: ${statusInvalid.join(', ')}`, {campo: 'status', motivo: 'invalido'}) 
 
         return await this.#repository.findBellow(statusQuery)
     }
 
     async updateInsumo(id, body){
-        if(id == undefined){ throw new Error("Id do insumo faltando!") }
+        if(id == undefined) throw new ValidationError("Id do insumo faltando!", {campo: 'id', motivo: 'obrigatorio'}) 
 
         let insumo = (await this.#repository.findById(id))[0]
 
-        if(!insumo){ throw new Error('Insumo nao encontrado')}
+        if(!insumo) throw new NotFoundError('Insumo nao encontrado')
 
-        if(Object.keys(body).length == 0){ throw new Error('Nenhum campo para atualizar!') }
+        if(Object.keys(body).length == 0) throw new ValidationError('Nenhum campo para atualizar!')
 
-        if(body.nome != undefined && (await this.existsInsumoNome(body.nome))){ throw new Error('Ja existe um insumo com esse nome!') }
+        if(body.nome != undefined && (await this.existsInsumoNome(body.nome))) throw new ConflictError('Ja existe um insumo com esse nome!', {campo: 'nome'})
 
-        if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))){ throw new Error('Status deve ser: ativo ou inativo') }
+        if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))) throw new Validation('Status deve ser: ativo ou inativo', {campo: 'status', motivo: 'invalido'})
 
-        if((body.status != undefined) && (insumo.status == 'excluido')){ throw new Error('Insumo excluido nao pode ter seu status modificado!') }
+        if((body.status != undefined) && (insumo.status == 'excluido')) throw new UnprocessableEntityError('Insumo excluido nao pode ter seu status modificado!', {statusAtual: 'excluido'})
 
         return await this.#repository.update(id, body)
     }
 
     async removeInsumo(id){
-        if(id == undefined){ throw new Error('Id do insumo faltando!') }
+        if(id == undefined) throw new ValidationError('Id do insumo faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
         let insumo = await this.#repository.findById(id)
 
         if(!insumo){ throw new Error('Insumo nao encontrado!') }
-        if(insumo.status == 'excluido') { throw new Error('Insumo ja exluido!') }
+        if(insumo.status == 'excluido') throw new UnprocessableEntityError('Insumo ja exluido!', {statusAtual: 'excluido'})
 
         return await this.#repository.update(id, {status: 'excluido'})
     }
@@ -97,24 +98,24 @@ class InsumoService {
         let tiposList = ['entrada', 'saida', 'ajuste']
         let motivosList = ['compra', 'perda', 'ajuste_manual']
 
-        if(id == undefined){ throw new Error('Id do insumo faltando!') }
+        if(id == undefined) throw new ValidationError('Id do insumo faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
         let insumo = (await this.#repository.findById(id))[0]
         let quantidadeAtual = Number(insumo.quantidade_atual)
 
-        if(!insumo){ throw new Error('Insumo nao encontrado')}
+        if(!insumo) throw new NotFoundError('Insumo nao encontrado')
 
-        if(body.tipo == undefined){ throw new Error('Tipo da movimentacao faltando!') }
+        if(body.tipo == undefined) throw new ValidationError('Tipo da movimentacao faltando!', {campo: 'tipo', motivo: 'obrigatorio'})
 
-        if(!tiposList.includes(body.tipo)){ throw new Error('Tipo deve ser: entrada, saida ou ajuste') }
+        if(!tiposList.includes(body.tipo)) throw new ValidationError('Tipo deve ser: entrada, saida ou ajuste', {campo: 'tipo', motivo: 'invalido'})
 
-        if(body.motivo == undefined){ throw new Error('Motivo da movimentacao faltando!') }
+        if(body.motivo == undefined) throw new ValidationError('Motivo da movimentacao faltando!', {campo: 'motivo', motivo: 'obrigatorio'})
 
-        if(body.motivo == 'venda'){ throw new Error('Motivo invalido!')}
+        if(body.motivo == 'venda') throw new ValidationError('Motivo invalido!', {campo: 'motivo', motivo: 'invalido'})
 
-        if(!motivosList.includes(body.motivo)){ throw new Error('Motivo deve ser: compra, perda ou ajuste_manual') }
+        if(!motivosList.includes(body.motivo)) throw new ValidationError('Motivo deve ser: compra, perda ou ajuste_manual', {campo: 'motivo', motivo: 'invalido'})
 
-        if(body.quantidade == undefined){ throw new Error('Quantidade da movimentacao faltando!') }
+        if(body.quantidade == undefined) throw new ValidationError('Quantidade da movimentacao faltando!', {campo: 'quantidade', campo: 'obrigatorio'})
 
         switch (body.tipo) {
             case 'ajuste':
@@ -144,7 +145,7 @@ class InsumoService {
 
                 let newQuantidadeAtual = quantidadeAtual + delta
 
-                if(newQuantidadeAtual < 0){ throw new Error('Valor de saida maior que a quantidade atual do insumo!') }
+                if(newQuantidadeAtual < 0) throw new InsufficientStockError('Valor de saida maior que a quantidade atual do insumo!')
 
                 updatedInsumo = await this.#repository.ajust(id, delta, {
                     tipo: body.tipo, 
