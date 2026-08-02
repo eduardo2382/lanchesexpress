@@ -67,6 +67,27 @@ class CategoriaService {
         return await this.#repository.update(id, body)        
     }
 
+    async updateCategoria(id, body){
+        let camposList = ['status']
+        if(id == undefined) throw new ValidationError('Id da categoria faltando!', {campo: 'id', motivo: 'obrigatorio'})
+
+        let categoria = (await this.#repository.findById(id))[0]
+
+        if(!categoria) throw new NotFoundError('Categoria não encontrada!')
+
+        let camposBody = Object.keys(body)
+        let camposInvalid = camposBody.filter((c) => !camposList.includes(c))
+
+        if(camposBody.length == 0) throw new ValidationError('Nenhum campo para atualizar!')
+        if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
+
+        if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))) throw new ValidationError('Status deve ser: ativo ou inativo!', {campo: 'status', motivo: 'invalido'})
+
+        if((body.status != undefined) && (categoria.status == 'excluido')) throw new UnprocessableEntityError('Categoria excluida nao pode ter seu status modificado!', {statusAtual: 'excluido'})
+
+        return await this.#repository.update(id, body)        
+    }
+
     async removeCategoria(id){
         if(id == undefined) throw new ValidationError('Id da categoria faltando!', {campo: 'id', motivo: 'obrigatorio'})
 

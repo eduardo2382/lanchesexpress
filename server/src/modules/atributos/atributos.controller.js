@@ -28,13 +28,13 @@ exports.update = catchAsync(async (req, res) => {
 })
 
 exports.updateStatus = catchAsync(async (req, res) => {
-    let updatedAtributo = await service.updateAtributo(req.params.id, req.body)
+    let updatedAtributo = await service.updateStatusAtributo(req.params.id, req.body)
 
     return res.status(200).json(updatedAtributo)
 })
 
 exports.remove = catchAsync(async (req, res) => {
-    let removedAtributo = await service.removeAtributo(req.params.id)
+    await service.removeAtributo(req.params.id)
 
     return res.status(204).send()
 })

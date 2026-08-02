@@ -34,7 +34,7 @@ exports.update = catchAsync(async (req, res) => {
 })
 
 exports.updateStatus = catchAsync(async (req, res) => {
-    let updatedInsumo = await service.updateInsumo(req.params.id, req.body)
+    let updatedInsumo = await service.updateStatusInsumo(req.params.id, req.body)
 
     return res.status(200).json(updatedInsumo)
 })

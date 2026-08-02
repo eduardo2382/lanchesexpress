@@ -68,6 +68,28 @@ class AtributoService {
         return await this.#repository.update(id, body)
     }
 
+    async updateStatusAtributo(id, body){
+        let camposList = ['status']
+
+        if(id == undefined) throw new ValidationError('Id do atributo faltando!', {campo: 'id', motivo: 'obrigatorio'})
+
+        let atributo = (await this.#repository.findById(id))[0]
+
+        if(!atributo) throw new NotFoundError('Atributo nao encontrado!') 
+
+        let camposBody = Object.keys(body)
+        let camposInvalid = camposBody.filter((c) => !camposList.includes(c))
+
+        if(camposBody.length == 0) throw new ValidationError('Nenhum campo para atualizar!')
+        if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
+
+        if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))) throw new ValidationError('Status deve ser: ativo ou inativo', {campo: 'status', motivo: 'invalido'})
+
+        if((body.status != undefined) && (atributo.status == 'excluido')) throw new UnprocessableEntityError('Atributo excluido nao pode ter seu status modificado!', {statusAtual: 'excluido'})
+
+        return await this.#repository.update(id, body)
+    }
+
     async removeAtributo(id){
         if(id == undefined) throw new ValidationError('Id do atributo faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
