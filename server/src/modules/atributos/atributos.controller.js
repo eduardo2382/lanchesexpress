@@ -1,65 +1,40 @@
 const AtributoService = require('./atributos.service.js')
+const service = new AtributoService()
 
-class AtributoController {
-    #service
+const catchAsync = require('../../utils/catchAsync.js')
 
-    constructor(){
-        this.#service = new AtributoService()
-    }
+exports.create = catchAsync(async (req, res) => {
+    let createdAtributo = await service.createAtributo(req.body)
 
-    create = async (req, res) => {
-        try{
-            let createdAtributo = await this.#service.createAtributo(req.body)
+    return res.status(201).location(`/api/atributo/${createdAtributo.id}`).json(createdAtributo)
+})
 
-            return res.status(201).json(createdAtributo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+exports.findAll = catchAsync(async (req, res) => {
+    let allAtributos = await service.findAllAtributos(req.query)
 
-    findAll = async (req, res) => {
-        try{
-            let allAtributos = await this.#service.findAllAtributos(req.query)
+    return res.status(200).json(allAtributos)
+})
 
-            return res.status(200).json(allAtributos)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+exports.findById = catchAsync(async (req, res) => {
+    let atributo = await service.findByIdAtributo(req.params.id)
 
-    findById = async (req, res) => {
-        try{
-            let atributo = await this.#service.findByIdAtributo(req.params.id)
+    return res.status(200).json(atributo)
+})
 
-            return res.status(200).json(atributo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+exports.update = catchAsync(async (req, res) => {
+    let updatedAtributo = await service.updateAtributo(req.params.id, req.body)
 
-    update = async (req, res) => {
-        try{
-            let { id } = req.params
+    return res.status(200).json(updatedAtributo)
+})
 
-            let updatedAtributo = await this.#service.updateAtributo(id, req.body)
+exports.updateStatus = catchAsync(async (req, res) => {
+    let updatedAtributo = await service.updateAtributo(req.params.id, req.body)
 
-            return res.status(200).json(updatedAtributo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+    return res.status(200).json(updatedAtributo)
+})
 
-    delete = async (req, res) => {
-        try{
-            let { id } = req.params
+exports.remove = catchAsync(async (req, res) => {
+    let removedAtributo = await service.removeAtributo(req.params.id)
 
-            let deletedAtributo = await this.#service.deleteAtributo(id)
-
-            return res.status(200).json(deletedAtributo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
-}
-
-module.exports = AtributoController
+    return res.status(204).send()
+})

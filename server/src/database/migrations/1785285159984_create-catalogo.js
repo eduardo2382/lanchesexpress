@@ -2,7 +2,7 @@ export const up = (pgm) => {
     pgm.createTable('categorias', {
         id: 'id',
         nome: { type: 'varchar(100)', notNull: true },
-        ativo: {type: 'boolean', notNull: true, default: true}
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     });
 
     pgm.createTable('insumos', {
@@ -11,13 +11,13 @@ export const up = (pgm) => {
         tipo_medida: { type: 'varchar(20)', check: "tipo_medida IN ('unidade', 'peso', 'volume')", notNull: true },
         quantidade_atual: {type: 'decimal(10,3)', notNull: true, default: 0},
         quantidade_minima: {type: 'decimal(10,3)', notNull: true, default: 0},
-        ativo: {type: 'boolean', notNull: true, default: true}
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     });
 
     pgm.createTable('atributos', {
         id: 'id',
         nome: { type: 'varchar(50)', notNull: true },
-        ativo: {type: 'boolean', notNull: true, default: true}
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     });
 
     pgm.createTable('produtos', {
@@ -28,7 +28,7 @@ export const up = (pgm) => {
         tipo: { type: 'varchar(20)', check: "tipo IN ('simples', 'montavel', 'variavel')", notNull: true },
         preco_base: { type: 'decimal(10,2)', notNull: true, default: 0 },
         vai_para_cozinha: { type: 'boolean', notNull: true, default: true },
-        ativo: { type: 'boolean', notNull: true, default: true },
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'},
         criado_em: {type: 'timestamp', default: pgm.func('current_timestamp')}
     });
    
@@ -48,7 +48,7 @@ export const up = (pgm) => {
         id: 'id',
         nome: {type: 'varchar(100)', notNull: true},
         tipo: {type: 'varchar(20)', check: "tipo IN ('escolha', 'porcao')", notNull: true},
-        ativo: {type: 'boolean', notNull: true, default: true}
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     })
 
     pgm.createTable('grupos_opcoes', {
@@ -57,7 +57,8 @@ export const up = (pgm) => {
         nome: {type: 'varchar(100)', notNull: true},
         obrigatorio: {type: 'boolean', default: true},
         tipo_selecao: {type: 'varchar(20)', check: "tipo_selecao IN ('unica', 'multipla')", notNull: true},
-        tipo_preco: {type: 'varchar(20)', check: "tipo_preco IN ('soma', 'nao_aplica')", notNull: true}
+        tipo_preco: {type: 'varchar(20)', check: "tipo_preco IN ('soma', 'nao_aplica')", notNull: true},
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     })
 
     pgm.addConstraint('grupos_opcoes', 'constraint_unica_produtoId_nome', 'UNIQUE(produto_id, nome)');
@@ -66,7 +67,8 @@ export const up = (pgm) => {
         id: 'id',
         grupo_id: {type: 'integer', references: 'grupos_opcoes'},
         opcao_id: {type: 'integer', references: 'opcoes'},
-        preco: {type: "decimal(10,2)"}
+        preco: {type: "decimal(10,2)"},
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     })
 
     pgm.addConstraint('grupo_opcao_itens', 'constraint_unica_grupoId_opcaoId', 'UNIQUE(grupo_id, opcao_id)');

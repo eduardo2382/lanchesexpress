@@ -1,16 +1,16 @@
 const { Router } = require('express')
-const AtributoController = require('./atributos.controller.js')
+const { findAll, findById, create, update, remove, updateStatus } = require('./atributos.controller.js')
 
 const route = Router()
-const controller = new AtributoController()
 
-route.get('/', controller.findAll)
-route.get('/:id', controller.findById)
+route.get('/', findAll)
+route.get('/:id', findById)
 
-route.post('/', controller.create)
+route.post('/', create)
 
-route.patch('/:id', controller.update)
+route.patch('/:id', update)
+route.patch('/:id/status', updateStatus)
 
-route.delete('/:id', controller.delete)
+route.delete('/:id', remove)
 
 module.exports = route

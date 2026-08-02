@@ -1,19 +1,19 @@
 const { Router } = require('express')
-const InsumoController = require('./insumos.controller.js')
+const { findAll, findBellow, findById, create, ajust, update, updateStatus, remove} = require('./insumos.controller.js')
 
 const route = Router()
-const controller = new InsumoController()
 
-route.get('/', controller.findAll)
-route.get('/baixo-estoque', controller.findBellow)
-route.get('/:id', controller.findById)
+route.get('/', findAll)
+route.get('/baixo-estoque', findBellow)
+route.get('/:id', findById)
 
-route.post('/', controller.create)
-route.post('/:id/ajuste', controller.ajust)
+route.post('/', create)
+route.post('/:id/ajuste', ajust)
 
-route.patch('/:id', controller.update)
+route.patch('/:id', update)
+route.patch('/:id/status', updateStatus)
 
-route.delete('/:id', controller.delete)
+route.delete('/:id', remove)
 
 module.exports = route
  

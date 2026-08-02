@@ -7,14 +7,8 @@ class CategoriaRepository {
         return result.rows
     }
     
-    async findAll(){
-        let result = await pool.query('SELECT * FROM categorias')
-
-        return result.rows
-    }
-
-    async findByName(nome){
-        let result = await pool.query("SELECT * FROM categorias WHERE nome = $1", [nome])
+    async findAll(statusQuery){
+        let result = await pool.query('SELECT * FROM categorias WHERE status = ANY($1)', [statusQuery])
 
         return result.rows
     }
@@ -24,6 +18,12 @@ class CategoriaRepository {
 
         return result.rows
     }
+
+    async findByName(nome){
+        let result = await pool.query("SELECT * FROM categorias WHERE nome = $1 AND status = 'ativo'", [nome])
+
+        return result.rows
+    }   
 
     async update(id, body){        
         let campos = []
@@ -36,9 +36,9 @@ class CategoriaRepository {
             index++
         }
 
-        if(body.ativo != undefined){
-            campos.push(`ativo = $${index}`)
-            values.push(body.ativo)
+        if(body.status != undefined){
+            campos.push(`status = $${index}`)
+            values.push(body.status)
             index++
         }
 
@@ -50,13 +50,6 @@ class CategoriaRepository {
 
         return result.rows
     }
-
-    async delete(id){
-        let result = await pool.query("UPDATE categorias SET ativo = false WHERE id = $1 RETURNING *", [id])
-
-        return result.rows
-    }
-
 }
 
 module.exports = CategoriaRepository

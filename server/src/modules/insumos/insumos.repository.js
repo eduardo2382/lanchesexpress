@@ -17,14 +17,8 @@ class InsumoRepository{
         return result.rows
     }
 
-    async findAll(incluirInativos){
-        let text = "SELECT * FROM insumos"
-
-        if(!incluirInativos){
-            text += " WHERE ativo = true"
-        }
-
-        let result = await pool.query(text)
+    async findAll(statusQuery){
+        let result = await pool.query("SELECT * FROM insumos WHERE status = ANY($1)", [statusQuery])
 
         return result.rows
     }
@@ -36,13 +30,13 @@ class InsumoRepository{
     }
 
     async findByName(nome){
-        let result = await pool.query("SELECT * FROM insumos WHERE nome = $1 AND ativo = true", [nome])
+        let result = await pool.query("SELECT * FROM insumos WHERE nome = $1 AND status = 'ativo'", [nome])
 
         return result.rows
     }
 
-    async findBellow(){
-        let result = await pool.query("SELECT * FROM insumos WHERE quantidade_atual < quantidade_minima")
+    async findBellow(statusQuery){
+        let result = await pool.query("SELECT * FROM insumos WHERE status = ANY($1) AND quantidade_atual < quantidade_minima", [statusQuery])
 
         return result.rows
     }
@@ -76,9 +70,9 @@ class InsumoRepository{
             index++
         }
 
-        if(body.ativo != undefined){
-            campos.push(`ativo = $${index}`)
-            values.push(body.ativo)
+        if(body.status != undefined){
+            campos.push(`status = $${index}`)
+            values.push(body.status)
             index++
         }
 
@@ -87,12 +81,6 @@ class InsumoRepository{
         let query = `UPDATE insumos SET ${campos.join(', ')} WHERE id = $${index} RETURNING *`
 
         let result = await pool.query(query, values)
-
-        return result.rows
-    }
-
-    async delete(id){
-        let result = await pool.query("UPDATE insumos SET ativo = false WHERE id = $1 RETURNING *", [id])
 
         return result.rows
     }

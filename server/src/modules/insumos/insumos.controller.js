@@ -1,87 +1,52 @@
 const InsumoService = require('./insumos.service.js')
+const service = new InsumoService()
 
-class InsumoController {
-    #service
+const catchAsync = require('../../utils/catchAsync.js')
 
-    constructor(){
-        this.#service = new InsumoService()
-    }
+exports.create = catchAsync(async (req, res) => {
+    let createdInsumo = await service.createInsumo(req.body)
 
-    create = async (req, res) => {
-        try{
-            let createdInsumo = await this.#service.createInsumo(req.body)
+    return res.status(201).location(`/api/insumo/${createdInsumo.id}`).json(createdInsumo)
+})
 
-            return res.status(201).json(createdInsumo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+exports.findAll = catchAsync(async (req, res) => {
+    let allInsumos = await service.findAllInsumos(req.query)
 
-    findAll = async (req, res) => {
-        try{
-            let { incluirInativos } = req.query
+    return res.status(200).json(allInsumos)
+})
 
-            let allInsumos = await this.#service.findAllInsumos(incluirInativos == 'true')
+exports.findById = catchAsync(async (req, res) => {
+    let insumo = await service.findByIdInsumo(req.params.id)
 
-            return res.status(200).json(allInsumos)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+    return res.status(200).json(insumo)
+})
 
-    findById = async (req, res) => {
-        try{
-            let insumo = await this.#service.findByIdInsumo(req.params.id)
+exports.findBellow = catchAsync(async (req, res) => {
+    let insumosBellow = await service.findBellowInsumos(req.query)
 
-            return res.status(200).json(insumo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+    return res.status(200).json(insumosBellow)
+})
 
-    findBellow = async (req, res) => {
-        try{
-            let insumosBellow = await this.#service.findBellowInsumos()
+exports.update = catchAsync(async (req, res) => {
+    let updatedInsumo = await service.updateInsumo(req.params.id, req.body)
 
-            return res.status(200).json(insumosBellow)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+    return res.status(200).json(updatedInsumo)
+})
 
-    update = async (req, res) => {
-        try{
-            let id = req.params.id
+exports.updateStatus = catchAsync(async (req, res) => {
+    let updatedInsumo = await service.updateInsumo(req.params.id, req.body)
 
-            let updatedInsumo = await this.#service.updateInsumo(id, req.body)
+    return res.status(200).json(updatedInsumo)
+})
 
-            return res.status(200).json(updatedInsumo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+exports.remove = catchAsync(async (req, res) => {
+    let deletedInsumo = await service.removeInsumo(req.params.id)
 
-    delete = async (req, res) => {
-        try{
-            let deletedInsumo = await this.#service.deleteInsumo(req.params.id)
+    return res.status(200).json(deletedInsumo)
+})
 
-            return res.status(200).json(deletedInsumo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
+exports.ajust = catchAsync(async (req, res) => {
+    let ajustedInsumo = await service.ajustInsumo(req.params.id, req.body)
 
-    ajust = async (req, res) => {
-        try{
-            let id = req.params.id
-
-            let ajustedInsumo = await this.#service.ajustInsumo(id, req.body)
-
-            return res.status(200).json(ajustedInsumo)
-        }catch(error){
-            return res.status(400).json({ error: error.message })
-        }
-    }
-}
-
-module.exports = InsumoController
+    return res.status(200).json(ajustedInsumo)
+})

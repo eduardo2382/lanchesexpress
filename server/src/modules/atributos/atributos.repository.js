@@ -7,14 +7,8 @@ class AtributoRepository {
         return result.rows
     }
 
-    async findAll(incluirInativos){
-        let query = 'SELECT * FROM atributos'
-
-        if(!incluirInativos){
-            query += ' WHERE ativo = true'
-        }
-
-        let result = await pool.query(query)
+    async findAll(statusQuery){
+        let result = await pool.query("SELECT * FROM atributos WHERE status = ANY($1)", [statusQuery])
 
         return result.rows
     }
@@ -26,7 +20,7 @@ class AtributoRepository {
     }
 
     async findByName(nome){
-        let result = await pool.query('SELECT * FROM atributos WHERE nome = $1 AND ativo = true', [nome])
+        let result = await pool.query("SELECT * FROM atributos WHERE nome = $1 AND status = 'ativo'", [nome])
 
         return result.rows
     }
@@ -42,9 +36,9 @@ class AtributoRepository {
             index++
         }
 
-        if(body.ativo != undefined){
-            campos.push(`ativo = $${index}`)
-            values.push(body.ativo)
+        if(body.status != undefined){
+            campos.push(`status = $${index}`)
+            values.push(body.status)
             index++
         }
 
@@ -53,12 +47,6 @@ class AtributoRepository {
         let query = `UPDATE atributos SET ${campos.join(', ')} WHERE id = $${index} RETURNING *`
 
         let result = await pool.query(query, values)
-
-        return result.rows
-    }
-
-    async delete(id){
-        let result = await pool.query('UPDATE atributos SET ativo = false WHERE id = $1 RETURNING *', [id])
 
         return result.rows
     }

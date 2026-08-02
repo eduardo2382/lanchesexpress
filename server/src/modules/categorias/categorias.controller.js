@@ -1,67 +1,40 @@
 const CategoriaService = require('./categorias.service.js')
+const service = new CategoriaService()
 
-class CategoriaController {
-    #service;
+const catchAsync = require('../../utils/catchAsync.js')
 
-    constructor(){
-        this.#service = new CategoriaService()
-    }
+exports.create = catchAsync(async (req, res) => {
+    let createdCategoria = await service.createCategoria(req.body)
 
-    create = async (req, res) => {
-        try{
-            let { nome } = req.body 
+    return res.status(201).location(`/api/categoria/${createdCategoria.id}`).json(createdCategoria)
+}) 
 
-            let createdCategoria = await this.#service.createCategoria(nome)
+exports.findAll = catchAsync(async (req, res)=>{
+    let allCategorias = await service.findAllCategorias(req.query)
 
-            return res.status(201).send(createdCategoria)
-        }catch(error){
-            return res.status(400).json({error: error.message})
-        }
-    }   
+    return res.status(200).json(allCategorias)
+})
 
-    findById = async (req, res) => {
-        try{
-            let { id } = req.params
+exports.findById = catchAsync(async (req, res) => {
+    let categoria = await service.findByIdCategoria(req.params.id)
 
-            let categoria = await this.#service.findByIdCategoria(id)
+    return res.status(200).json(categoria)
+})
 
-            return res.status(200).json(categoria)
-        }catch(error){
-            return res.status(400).json({'error': error.message})
-        }
-    }
+exports.update = catchAsync(async (req, res) => {
+    let updatedCategoria = await service.updateCategoria(req.params.id, req.body)
 
-    findAll = async (req, res)=>{
-        try{
-            let allCategorias = await this.#service.findAllCategorias()
+    return res.status(200).json(updatedCategoria)
+})
 
-            return res.status(200).json(allCategorias)
-        }catch(error){
-            return res.status(400).json({'error': error.message})
-        }
-    }
+exports.updateStatus = catchAsync(async (req, res) => {
+    let updatedCategoria = await service.updateCategoria(req.params.id, req.body)
 
-    update = async (req, res) => {
-        try{
-            let id = req.params.id
+    return res.status(200).json(updatedCategoria)
+})
 
-            let updatedCategoria = await this.#service.updateCategoria(id, req.body)
+exports.remove = catchAsync(async (req, res) => {
+    let removedCategoria = await service.removeCategoria(req.params.id)
 
-            return res.status(200).json(updatedCategoria)
-        }catch(error){
-            return res.status(400).json({ error: error.message})
-        }
-    }
-
-    delete = async (req, res) => {
-        try{
-            let deletedCategoria = await this.#service.deleteCategoria(req.params.id)
-
-            return res.status(200).json(deletedCategoria)
-        }catch(error){
-            return res.status(400).json({error: error.message})
-        }
-    }
-}
-
-module.exports = CategoriaController
+    return res.status(204).send()
+})
