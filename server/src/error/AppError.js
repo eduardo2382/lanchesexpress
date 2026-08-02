@@ -28,4 +28,22 @@ class ConflictError extends AppError{
     }
 }
 
-module.exports = { AppError, ValidationError, NotFoundError, ConflictError}
+class UnprocessableEntityError extends AppError {
+  constructor(message, details = null) {
+    super(message, 422, 'REGRA_NEGOCIO', details)
+  }
+}
+
+class InsufficientStockError extends AppError {
+  constructor(message = 'Estoque insuficiente para concluir o pedido', details = null) {
+    super(message, 409, 'ESTOQUE_INSUFICIENTE', details)
+  }
+}
+
+class ExternalServiceError extends AppError {
+  constructor(message = 'Serviço externo indisponível no momento', details = null) {
+    super(message, 502, 'SERVICO_EXTERNO_INDISPONIVEL', details)
+  }
+}
+
+module.exports = { AppError, ValidationError, NotFoundError, ConflictError, UnprocessableEntityError, InsufficientStockError, ExternalServiceError}
