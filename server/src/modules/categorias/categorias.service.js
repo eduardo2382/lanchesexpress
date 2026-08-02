@@ -1,4 +1,5 @@
 const CategoriaRepository = require('./categorias.repository.js')
+const { ValidationError, ConflictError, NotFoundError, UnprocessableEntityError } = require('../../error/AppError.js')
 
 class CategoriaService {
     #repository;
@@ -16,9 +17,9 @@ class CategoriaService {
     }
 
     async createCategoria(body){
-        if(body.nome == undefined){ throw new Error('Nome da categoria faltando!') }
+        if(body.nome == undefined) throw new ValidationError('Nome da categoria faltando!', {campo: 'nome', motivo: 'obrigatorio'}) 
 
-        if(await this.existsCategoriaNome(body.nome)){ throw new Error('Ja existe uma categoria com esse nome') }
+        if(await this.existsCategoriaNome(body.nome)) throw new ConflictError('Ja existe uma categoria com esse nome', {campo: 'nome'})
 
         return (await this.#repository.save(body.nome))[0]
     }
@@ -28,46 +29,46 @@ class CategoriaService {
         let statusQuery = query.status ? query.status.split(',') : ['ativo']    
 
         let statusInvalid = statusQuery.filter((s) => !statusList.includes(s))
-        if(statusInvalid.length > 0){ throw new Error(`Status invalido: ${statusInvalid.join(', ')}`) }
+        if(statusInvalid.length > 0) throw new ValidationError(`Status invalido: ${statusInvalid.join(', ')}`, {campo: 'status', motivo: 'invalido'})
 
         return await this.#repository.findAll(statusQuery)
     }
 
     async findByIdCategoria(id){
-        if(id == undefined){ throw new Error('Id do atributo faltando!') }
+        if(id == undefined) throw new ValidationError('Id do atributo faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
         let categoria = await this.#repository.findById(id)
 
-        if(categoria.length == 0){ throw new Error('Categoria nao encotrada') }
+        if(categoria.length == 0) throw new NotFoundError('Categoria nao encotrada')
 
         return categoria[0]
     }
 
     async updateCategoria(id, body){
-        if(id == undefined){ throw new Error('Id da categoria faltando!') }
+        if(id == undefined) throw new ValidationError('Id da categoria faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
         let categoria = (await this.#repository.findById(id))[0]
 
-        if(!categoria){ throw new Error('Categoria não encontrada!') }
+        if(!categoria) throw new NotFoundError('Categoria não encontrada!')
 
-        if(Object.keys(body).length == 0){ throw new Error('Nenhum campo para atualizar!') }
+        if(Object.keys(body).length == 0) throw new ValidationError('Nenhum campo para atualizar!')
 
-        if((body.nome != undefined) && (await this.existsCategoriaNome(body.nome))){ throw new Error('Ja existe uma categoria com esse nome!') }
+        if((body.nome != undefined) && (await this.existsCategoriaNome(body.nome))) throw new ConflictError('Ja existe uma categoria com esse nome!', {campo: 'nome'})
 
-        if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))){ throw new Error('Status deve ser: ativo ou inativo!') }
+        if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))) throw new ValidationError('Status deve ser: ativo ou inativo!', {campo: 'status', motivo: 'invalido'})
 
-        if((body.status != undefined) && (categoria.status == 'excluido')){ throw new Error('Categoria excluida nao pode ter seu status modificado!') }
+        if((body.status != undefined) && (categoria.status == 'excluido')) throw new UnprocessableEntityError('Categoria excluida nao pode ter seu status modificado!', {statusAtual: 'excluido'})
 
         return await this.#repository.update(id, body)        
     }
 
     async removeCategoria(id){
-        if(id == undefined){ throw new Error('Id da categoria faltando!') }
+        if(id == undefined) throw new ValidationError('Id da categoria faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
         let categoria = (await this.#repository.findById(id))[0]
 
         if(!categoria){ throw new Error('Categoria nao encontrada!') }
-        if(categoria.status == 'excluido') { throw new Error('Categoria ja exluida') }
+        if(categoria.status == 'excluido') throw new UnprocessableEntityError('Categoria ja exluida', {statusAtual: 'excluido'})
 
         return await this.#repository.update(id, {status: 'excluido'})
     }
