@@ -64,13 +64,19 @@ class InsumoService {
     }
 
     async updateInsumo(id, body){
+        let camposList = ['nome', 'tipo_medida', 'quantidade_atual', 'quantidade_minima', 'status']
+
         if(id == undefined) throw new ValidationError("Id do insumo faltando!", {campo: 'id', motivo: 'obrigatorio'}) 
 
         let insumo = (await this.#repository.findById(id))[0]
 
         if(!insumo) throw new NotFoundError('Insumo nao encontrado')
 
-        if(Object.keys(body).length == 0) throw new ValidationError('Nenhum campo para atualizar!')
+        let camposBody = Object.keys(body)
+        let camposInvalid = camposBody.filter((c) => !camposList.includes(c))
+
+        if(camposBody.length == 0) throw new ValidationError('Nenhum campo para atualizar!')
+        if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
 
         if(body.nome != undefined && (await this.existsInsumoNome(body.nome))) throw new ConflictError('Ja existe um insumo com esse nome!', {campo: 'nome'})
 
@@ -84,7 +90,7 @@ class InsumoService {
     async removeInsumo(id){
         if(id == undefined) throw new ValidationError('Id do insumo faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
-        let insumo = await this.#repository.findById(id)
+        let insumo = (await this.#repository.findById(id))[0]
 
         if(!insumo){ throw new Error('Insumo nao encontrado!') }
         if(insumo.status == 'excluido') throw new UnprocessableEntityError('Insumo ja exluido!', {statusAtual: 'excluido'})
@@ -97,6 +103,7 @@ class InsumoService {
         let updatedInsumo;
         let tiposList = ['entrada', 'saida', 'ajuste']
         let motivosList = ['compra', 'perda', 'ajuste_manual']
+        let camposList = ['tipo', 'motivo', 'quantidade']
 
         if(id == undefined) throw new ValidationError('Id do insumo faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
@@ -105,13 +112,18 @@ class InsumoService {
 
         if(!insumo) throw new NotFoundError('Insumo nao encontrado')
 
+        let camposBody = Object.keys(body)
+        let camposInvalid = camposBody.filter((c) => !camposList.includes(c))
+
+        if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
+
         if(body.tipo == undefined) throw new ValidationError('Tipo da movimentacao faltando!', {campo: 'tipo', motivo: 'obrigatorio'})
 
         if(!tiposList.includes(body.tipo)) throw new ValidationError('Tipo deve ser: entrada, saida ou ajuste', {campo: 'tipo', motivo: 'invalido'})
 
         if(body.motivo == undefined) throw new ValidationError('Motivo da movimentacao faltando!', {campo: 'motivo', motivo: 'obrigatorio'})
 
-        if(body.motivo == 'venda') throw new ValidationError('Motivo invalido!', {campo: 'motivo', motivo: 'invalido'})
+        if(body.motivo == 'venda') throw new ValidationError('Motivo deve ser: compra, perda ou ajuste_manual', {campo: 'motivo', motivo: 'invalido'})
 
         if(!motivosList.includes(body.motivo)) throw new ValidationError('Motivo deve ser: compra, perda ou ajuste_manual', {campo: 'motivo', motivo: 'invalido'})
 

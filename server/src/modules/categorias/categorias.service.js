@@ -45,13 +45,18 @@ class CategoriaService {
     }
 
     async updateCategoria(id, body){
+        let camposList = ['nome', 'status']
         if(id == undefined) throw new ValidationError('Id da categoria faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
         let categoria = (await this.#repository.findById(id))[0]
 
         if(!categoria) throw new NotFoundError('Categoria não encontrada!')
 
-        if(Object.keys(body).length == 0) throw new ValidationError('Nenhum campo para atualizar!')
+        let camposBody = Object.keys(body)
+        let camposInvalid = camposBody.filter((c) => !camposList.includes(c))
+
+        if(camposBody.length == 0) throw new ValidationError('Nenhum campo para atualizar!')
+        if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
 
         if((body.nome != undefined) && (await this.existsCategoriaNome(body.nome))) throw new ConflictError('Ja existe uma categoria com esse nome!', {campo: 'nome'})
 

@@ -45,13 +45,19 @@ class AtributoService {
     }
 
     async updateAtributo(id, body){
+        let camposList = ['nome', 'status']
+
         if(id == undefined) throw new ValidationError('Id do atributo faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
         let atributo = (await this.#repository.findById(id))[0]
 
         if(!atributo) throw new NotFoundError('Atributo nao encontrado!') 
 
-        if(Object.keys(body).length == 0) throw new ValidationError('Nenhum campo para atualizar!')
+        let camposBody = Object.keys(body)
+        let camposInvalid = camposBody.filter((c) => !camposList.includes(c))
+
+        if(camposBody.length == 0) throw new ValidationError('Nenhum campo para atualizar!')
+        if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
 
         if((body.nome != undefined) && (await this.existsAtributoNome(body.nome))) throw new ConflictError('Ja existe um atributo com esse nome!', {campo: 'nome'})
 
