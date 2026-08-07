@@ -23,11 +23,11 @@ export const up = (pgm) => {
     pgm.createTable('produtos', {
         id: 'id',
         produto_pai_id: {type: 'integer', references: 'produtos', default: null},
-        categoria_id: { type: 'integer', references: 'categorias', onDelete: 'SET NULL' },
+        categoria_id: { type: 'integer', references: 'categorias', onDelete: 'SET NULL', notNull: true },
         nome: { type: 'varchar(150)', notNull: true },
         tipo: { type: 'varchar(20)', check: "tipo IN ('simples', 'montavel', 'variavel')", notNull: true },
         preco_base: { type: 'decimal(10,2)', notNull: true, default: 0 },
-        vai_para_cozinha: { type: 'boolean', notNull: true, default: true },
+        vai_para_cozinha: { type: 'boolean', notNull: true, default: false },
         status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'},
         criado_em: {type: 'timestamp', default: pgm.func('current_timestamp')}
     });
@@ -35,7 +35,7 @@ export const up = (pgm) => {
     pgm.createTable('produto_insumos', {
         produto_id: {type: 'integer', references: 'produtos'},
         insumo_id: {type: 'integer', references: 'insumos'},
-        quantidade: {type: 'integer', check: "quantidade > 0", notNull: true}
+        quantidade: {type: 'decimal(10,3)', check: "quantidade > 0", notNull: true}
     });
     
     pgm.createTable('produto_atributos', {

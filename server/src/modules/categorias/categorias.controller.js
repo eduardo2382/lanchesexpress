@@ -1,5 +1,4 @@
-const CategoriaService = require('./categorias.service.js')
-const service = new CategoriaService()
+const service = require('./categorias.service.js')
 
 const catchAsync = require('../../utils/catchAsync.js')
 

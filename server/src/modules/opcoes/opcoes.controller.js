@@ -1,5 +1,4 @@
-const OpcaoService = require('./opcoes.service.js')
-const service = new OpcaoService()
+const service = require('./opcoes.service.js')
 
 const catchAsync = require('../../utils/catchAsync.js')
 

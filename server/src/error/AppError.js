@@ -23,8 +23,8 @@ class NotFoundError extends AppError{
 }
 
 class ConflictError extends AppError{
-    constructor(message = 'Conflito com o estado atual do recurso'){
-        super(message, 409, 'CONFLITO')
+    constructor(message = 'Conflito com o estado atual do recurso', details=null){
+        super(message, 409, 'CONFLITO', details)
     }
 }
 

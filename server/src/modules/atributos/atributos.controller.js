@@ -1,5 +1,4 @@
-const AtributoService = require('./atributos.service.js')
-const service = new AtributoService()
+const service = require('./atributos.service.js')
 
 const catchAsync = require('../../utils/catchAsync.js')
 

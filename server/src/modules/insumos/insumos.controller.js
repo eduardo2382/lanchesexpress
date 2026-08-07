@@ -1,5 +1,5 @@
-const InsumoService = require('./insumos.service.js')
-const service = new InsumoService()
+const service = require('./insumos.service.js')
+
 
 const catchAsync = require('../../utils/catchAsync.js')
 
