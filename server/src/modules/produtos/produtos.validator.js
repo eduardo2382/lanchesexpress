@@ -6,6 +6,8 @@ const STATUS_VALIDOS_QUERY = ['ativo', 'inativo', 'excluido']
 const TIPO_SELECAO_VALIDOS = ['unica', 'multipla']
 const TIPO_PRECO_VALIDOS = ['soma', 'nao_aplica']
 
+const isLowercase = (str) => str === str.toLowerCase()
+
 exports.validateCreateCampos = (body) => {
     let camposBody = body ? Object.keys(body) : []
 
@@ -16,20 +18,21 @@ exports.validateCreateCampos = (body) => {
     if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
 
     if(!body.nome) throw new ValidationError('Nome do produto faltando!', {campo: 'nome', motivo: 'obrigatorio'})
+    if(!isLowercase(body.nome)) throw new ValidationError('Nome do produto deve ser minusculo!', {campo: 'nome', motivo: 'invalido'})
+
     if(!body.categoria_id) throw new ValidationError('Id da categoria do produto faltando!', {campo: 'categoria_id', motivo: 'obrigatorio'})
+
     if(!body.tipo) throw new ValidationError('Tipo do produto faltando!', {campo: 'tipo', motivo: 'obrigatorio'})
     if(!TIPOS_VALIDOS.includes(body.tipo)) throw new ValidationError('Tipo do produto deve ser: simples ou montavel', {campo: 'tipo', motivo: 'invalido'})
+    if(body.tipo === 'montavel' && !Array.isArray(body.grupos)) throw new ValidationError('Grupos é obrigatorio para produto montavel', {campo: 'grupos', motivo: 'obrigatorio'})
 
     if(body.preco_base && (typeof body.preco_base) != 'number') throw new ValidationError('Preco base deve ser um numero')
 
-    if(!Array.isArray(body.insumos)) throw new ValidationError('Insumos deve ser uma lista', {campo: 'insumos', motivo: 'invalido'})
-
-    if(body.tipo === 'montavel' && !Array.isArray(body.grupos)) throw new ValidationError('Grupos é obrigatorio para produto montavel', {campo: 'grupos', motivo: 'obrigatorio'})
+    if(!Array.isArray(body.insumos)) throw new ValidationError('Insumos deve ser uma lista', {campo: 'insumos', motivo: 'invalido'})   
 }
 
 exports.validateUpdateCampos = (body) => {
     let camposBody = body ? Object.keys(body) : []
-
     if(camposBody.length == 0) throw new ValidationError('Nenhum campo para atualizar')
 
     let camposInvalid = camposBody.filter((c) => !CAMPOS_PERMITIDOS.includes(c))
@@ -37,6 +40,8 @@ exports.validateUpdateCampos = (body) => {
 
     if(camposBody.includes('insumos')) throw new ValidationError('Nao e possivel atualizar os insumos do produto', {campo: 'insumos', motivo: 'invalido'})
     if(camposBody.includes('grupos')) throw new ValidationError('Nao e possivel atualizar os grupos do produto', {campo: 'grupos', motivo: 'invalido'})
+
+    if(!body.nome && !isLowercase(body.nome)) throw new ValidationError('Nome do produto deve ser minusculo!', {campo: 'nome', motivo: 'invalido'})
 
     if(body.status && !['ativo', 'inativo'].includes(body.status)) throw new ValidationError('Status deve ser: ativo ou inativo')
 
@@ -70,8 +75,13 @@ exports.validateUpdateStatusCampos = (body) => {
 
 exports.validateGrupo = (grupo) => {
     if(!grupo.nome || grupo.nome == '') throw new ValidationError('Nome do grupo faltando!', {campo: 'nome', motivo: 'obrigatorio'})
+
+    if(!isLowercase(grupo.nome)) throw new ValidationError('Nome do grupo deve ser minusculo!', {campo: 'nome', motivo: 'invalido'})
+
     if(!grupo.tipo_selecao || !TIPO_SELECAO_VALIDOS.includes(grupo.tipo_selecao)) throw new ValidationError('Tipo de selecao do grupo deve ser: unica ou multipla', {campo: 'tipo_selecao', motivo: 'invalido'})
     if(!grupo.tipo_preco || !TIPO_PRECO_VALIDOS.includes(grupo.tipo_preco)) throw new ValidationError('Tipo de preco do grupo deve ser: soma ou nao_aplica', {campo: 'tipo_preco', motivo: 'invalido'})
+
+    if(grupo.itens.length == 0) throw new ValidationError('Grupo sem itens', {campo: 'itens grupo', motivo: 'obrigatorio'})
 }
 
 exports.validateItem = (item) => {

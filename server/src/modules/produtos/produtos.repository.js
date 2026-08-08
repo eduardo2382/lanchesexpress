@@ -1,5 +1,7 @@
 const pool = require('../../database/connection.js')
 
+const repositoryGruposOpcoes = require('./grupos-opcoes.repository.js')
+
 exports.saveSimples = async (produtoValues, insumosProduto) => { 
     let keys = Object.keys(produtoValues)
     let values = Object.values(produtoValues)
@@ -35,50 +37,31 @@ exports.saveSimples = async (produtoValues, insumosProduto) => {
 }
 
 exports.saveMontavel = async (produtoValues, insumosProduto, gruposProduto) => {
-    let keys = Object.keys(produtoValues)
-    let values = Object.values(produtoValues)
-    let columns = keys.join(', ')
-    let placeholders = keys.map((_, idx) => `$${idx+1}`).join(', ')
+    let index = 1
+    let values = []
+    let placeholders = []
 
     let client = await pool.connect()
 
     try{
         await client.query('BEGIN')
 
-        let produtoResult = await client.query(`INSERT INTO produtos(${columns}) VALUES (${placeholders}) RETURNING *`, values)
+        let produtoResult = await client.query(`INSERT INTO produtos(nome, categoria_id, tipo, produto_pai_id, preco_base, vai_para_cozinha) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`, Object.values(produtoValues))
         let produto = (produtoResult.rows)[0]
 
-        for(let i of insumosProduto){
-            await client.query(
-                'INSERT INTO produto_insumos(produto_id, insumo_id, quantidade) VALUES ($1, $2, $3)', 
-                [produto.id, i.insumo_id, i.quantidade]
-            )
+        for(let insumo of insumosProduto){
+            values.push(produto.id, insumo.insumo_id, insumo.quantidade)
+
+            placeholders.push(`($${index}, $${index+1}, $${index+2})`)
+
+            index += 3
         }
 
-        for(let grupo of gruposProduto){
-            let grupoResult = await client.query(
-                'INSERT INTO grupos_opcoes(produto_id, nome, obrigatorio, tipo_selecao, tipo_preco) VALUES ($1, $2, $3, $4, $5) RETURNING *', 
-                [produto.id, grupo.nome, grupo.obrigatorio, grupo.tipo_selecao, grupo.tipo_preco]
-            )
-
-            let grupoId = (grupoResult.rows)[0].id
-
-            for(let item of grupo.itens){
-                let grupoItens = Result = await client.query(
-                    'INSERT INTO grupo_opcao_itens(grupo_id, opcao_id, preco) VALUES ($1, $2, $3) RETURNING *',
-                    [grupoId, item.opcao_id, item.preco]
-                )
-
-                let grupoItensId = (grupoItens.rows)[0].id
-
-                for(let insumo of item.insumos){
-                    let insumoItem = await client.query(
-                        'INSERT INTO grupo_opcao_item_insumos(grupo_opcao_item_id, insumo_id, quantidade) VALUES ($1, $2, $3) RETURNING *',
-                        [grupoItensId, insumo.insumo_id, insumo.quantidade]
-                    )
-                }
-            }
+        if(values.length > 0){
+            await client.query(`INSERT INTO produto_insumos(produto_id, insumo_id, quantidade) VALUES ($1, $2, $3)`, values)
         }
+
+        await repositoryGruposOpcoes.saveGruposComplete(produto.id, gruposProduto, client)
 
         await client.query('COMMIT')
 

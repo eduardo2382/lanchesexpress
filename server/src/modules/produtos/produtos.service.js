@@ -28,13 +28,11 @@ async function setGruposProduto(grupos){
     for(let grupo of grupos){
         validator.validateGrupo(grupo)
 
-        let itens = grupo.itens
-
         if(grupo.itens.length == 0) throw new ValidationError('Grupo sem itens', {campo: 'itens grupo', motivo: 'obrigatorio'})
 
         await validateOpcoes(grupo.itens)
 
-        for(let item of itens){
+        for(let item of grupo.itens){
             validator.validateItem(item)
             await validateInsumos(item.insumos)
         }
