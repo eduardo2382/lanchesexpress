@@ -1,5 +1,23 @@
 const pool = require('../../database/connection.js')
 
+exports.existsItem = async (itemId) => {
+    let result = await pool.query('SELECT * FROM grupo_opcao_itens WHERE id = $1', [itemId])
+
+    return (result.rows).length > 0
+}
+
+exports.existsGrupo = async (grupoId) => {
+    let result = await pool.query('SELECT * FROM grupos_opcoes WHERE id = $1', [grupoId])
+
+    return (result.rows).length > 0
+}
+
+exports.existsGrupo = async (grupoId) => {
+    let result = await pool.query('SELECT * FROM grupos_opcoes WHERE id = $1', [grupoId])
+
+    return (result.rows).length > 0
+}
+
 exports.saveGruposComplete = async (produtoId, gruposProduto, clientAt) => {
     let client;
     
@@ -144,4 +162,112 @@ exports.findGrupos = async (produtoId) => {
     let result = await pool.query('SELECT * FROM grupos_opcoes WHERE produto_id = $1', [produtoId])
 
     return result.rows
+}
+
+exports.findGrupoById = async (grupoId) => {
+    let result = await pool.query('SELECT * FROM grupos_opcoes WHERE id = $1', [grupoId])
+
+    return result.rows
+}
+
+exports.updateGrupo = async (grupoId, body) => {
+    let columns = Object.keys(body)
+    let values = Object.values(body)
+
+    columns = columns.map((val, idx) => `${val} = $${idx+1}`)
+    values.push(grupoId)
+
+    let querie  = `UPDATE grupos_opcoes SET ${columns.join(', ')} WHERE id = $${columns.length + 1} RETURNING *`
+
+    let result = await pool.query(querie, values)
+
+    return result.rows
+}
+
+exports.updateItem = async (itemId, body) => {
+    let columns = Object.keys(body)
+    let values = Object.values(body)
+
+    columns = columns.map((val, idx) => `${val} = $${idx+1}`)
+    values.push(itemId)
+
+    let querie = `UPDATE grupo_opcao_itens SET ${columns.join(', ')} WHERE id = $${columns.length + 1} RETURNING *`
+
+    let result = await pool.query(querie, values)
+
+    return result.rows
+}
+
+exports.linkOpcao = async (grupoId, body) => {
+    let client = await pool.connect()
+
+    try{
+        await client.query('BEGIN')
+
+        let values = [grupoId, body.opcao_id, body.preco]
+        let querie = `INSERT INTO grupo_opcao_itens(grupo_id, opcao_id, preco) VALUES ($1, $2, $3) RETURNING *`
+
+        let resultGrupoOpcao = (await client.query(querie, values)).rows[0]
+
+        if(body.insumos){
+            let index = 1
+            let valuesInsumos = []
+            let placeholdersInsumos = []
+
+            for(let insumo of body.insumos){
+                valuesInsumos.push(resultGrupoOpcao.id, insumo.insumo_id, insumo.quantidade)
+                placeholdersInsumos.push(`($${index}, $${index+1}, $${index+2})`)
+                index += 3
+            }
+
+            let querieInsumos = `INSERT INTO grupo_opcao_item_insumos(grupo_opcao_item_id, insumo_id, quantidade) VALUES ${placeholdersInsumos.join(', ')}` 
+
+            await client.query(querieInsumos, valuesInsumos)
+        }
+
+        await client.query('COMMIT')
+
+        return resultGrupoOpcao.rows
+    }catch(error){
+        await client.query('ROLLBACK')
+        throw error
+    }finally{
+        await client.release()
+    }
+} 
+
+exports.linkInsumo = async (itemId, body) => {
+    let insumos = body.insumos
+
+    let index = 1
+    let values = []
+    let placeholders = []
+
+    for(let insumo of insumos){
+        values.push(itemId, insumo.insumo_id, insumo.quantidade)
+        placeholders.push(`($${index}, $${index+1}, $${index+2})`)
+        index += 3
+    }
+
+    let querie = `INSERT INTO grupo_opcao_item_insumos(grupo_opcao_item_id, insumo_id, quantidade) VALUES ${placeholders.join(', ')} RETURNING *`
+
+    let result = await pool.query(querie, values)
+
+    return result.rows
+}
+
+exports.removeGrupo = async (grupoId) => {
+    let resultGrupos = await pool.query("UPDATE grupos_opcoes SET status = 'excluido' WHERE id = $1", [grupoId])
+
+    let resultItens = await pool.query("UPDATE grupo_opcao_itens SET status = 'excluido' WHERE grupo_id = $1", [grupoId])
+}
+
+exports.removeItem = async (itemId) => {
+    let resultItens = await pool.query("UPDATE grupo_opcao_itens SET status = 'excluido' WHERE id = $1", [itemId])
+
+    let resultInsumos = await pool.query("UPDATE grupo_opcao_item_insumos SET status = 'excluido' WHERE grupo_opcao_item_id = $1", [itemId])
+}
+
+exports.removeInsumo = async (itemId, insumoId) => {
+    let resultInsumo = await pool.query("UPDATE grupo_opcao_item_insumos SET status = 'excluido' WHERE grupo_opcao_item_id = $1 AND insumo_id = $2", [itemId, insumoId])
 }

@@ -66,3 +66,45 @@ exports.createGrupo = catchAsync(async (req, res) => {
 
     return res.status(201).json(createdGrupo)
 })
+
+exports.updateGrupo = catchAsync(async (req, res) => {
+    let updatedGrupo = await serviceGruposOpcoes.updateGrupo(req.params.grupoId, req.body)
+
+    return res.status(200).json(updatedGrupo)
+})
+
+exports.linkOpcao = catchAsync(async (req, res) => {
+    let linkedOpcao = await serviceGruposOpcoes.linkOpcao(req.params.grupoId, req.body)
+
+    return res.status(201).json(linkedOpcao)
+})
+
+exports.linkInsumo = catchAsync(async (req, res) => {
+    let linkedInsumo = await serviceGruposOpcoes.linkInsumo(req.params.itemId, req.body)
+
+    return res.status(200).json(linkedInsumo)
+})
+
+exports.updatePrecoItem = catchAsync(async (req, res) => {
+    let updatedItem = await serviceGruposOpcoes.updatePrecoItem(req.params.itemId, req.body)
+
+    res.status(200).json(updatedItem)
+})
+
+exports.removeGrupo = catchAsync(async (req, res) => {
+    await serviceGruposOpcoes.removeGrupo(req.params.grupoId)
+
+    return res.status(204).send()
+})
+
+exports.removeItem = catchAsync(async (req, res) => {
+    await serviceGruposOpcoes.removeItem(req.params.itemId)
+
+    return res.status(204).send()
+})
+
+exports.removeInsumo = catchAsync(async (req, res) => {
+    await serviceGruposOpcoes.removeInsumo(req.params.itemId, req.params.insumoId)
+
+    return res.status(204).send()
+})

@@ -10,7 +10,6 @@ const { existsOpcaoId, existsOpcaoArrayId } = require('../opcoes/opcoes.service.
 const gruposOpcoesRepository = require('./grupos-opcoes.repository.js')
 
 
-
 function setProdutoValue(body){
     return {
         nome: body.nome,
@@ -34,7 +33,9 @@ async function setGruposProduto(grupos){
 
         for(let item of grupo.itens){
             validator.validateItem(item)
-            await validateInsumos(item.insumos)
+            if(item.insumos && item.insumos.length > 0){
+                await validateInsumos(item.insumos)
+            }
         }
 
         gruposProduto.push({

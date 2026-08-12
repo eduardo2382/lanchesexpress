@@ -76,7 +76,8 @@ export const up = (pgm) => {
     pgm.createTable('grupo_opcao_item_insumos', {
         grupo_opcao_item_id: {type: 'integer', references: 'grupo_opcao_itens'},
         insumo_id: {type: 'integer', references: 'insumos'},
-        quantidade: {type: 'decimal(10,3)', notNull: true}
+        quantidade: {type: 'decimal(10,3)', notNull: true},
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     });
 };
 
