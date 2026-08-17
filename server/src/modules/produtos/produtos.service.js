@@ -146,14 +146,14 @@ exports.findAllProdutos = async (query) => {
     return repository.findAll(statusList, categoriaList)
 }
 
-exports.findByIdProduto = async (id) => {
+exports.findProdutoById = async (id) => {
     if(!id) throw new ValidationError('Id do produto faltando!', {campo: 'id', motivo: 'obrigatorio'})
 
-    let produto = await validateProdutoId(id)
+    let produto = (await validateProdutoId(id))[0]
 
     produto.insumos = await repository.findInsumosProduto(id)
 
-    if(produto.tipo === 'montavel'){
+    if(produto.tipo == 'montavel'){
         produto.grupos = (await gruposOpcoesRepository.findGruposItensInsumos(id))[0].grupos
     }
 
@@ -182,9 +182,7 @@ exports.updateProduto = async (id, body) => {
         if(body.categoria_id === undefined) await validateProdutoNome(body.nome, produto.categoria_id)
     }
 
-    if(body.produto_pai_id && produto.tipo !== 'variavel') throw new UnprocessableEntityError(`Um produto ${produto.tipo} nao pode ter seu produto pai id alterado!`)
-
-    if(body.produto_pai_id && produto.tipo === 'montavel') await validateProdutoPai(body.produto_pai_id)
+    if(body.produto_pai_id) throw new UnprocessableEntityError(`Um produto ${produto.tipo} nao pode ter seu produto pai id alterado!`)
 
     return (await repository.update(id, body))[0]
 }

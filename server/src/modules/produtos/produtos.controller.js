@@ -1,5 +1,6 @@
 const serviceProdutos = require('./produtos.service.js')
 const serviceGruposOpcoes = require('./grupos-opcoes.service.js')
+const serviceVariacoes = require('./variacoes.service.js')
 
 const catchAsync = require('../../utils/catchAsync.js')
 
@@ -18,7 +19,7 @@ exports.findAll = catchAsync(async (req, res) => {
 })
 
 exports.findById = catchAsync(async (req, res) => {
-    let produto = await serviceProdutos.findByIdProduto(req.params.id)
+    let produto = await serviceProdutos.findProdutoById(req.params.id)
 
     return res.status(200).json(produto)
 })
@@ -105,6 +106,38 @@ exports.removeItem = catchAsync(async (req, res) => {
 
 exports.removeInsumo = catchAsync(async (req, res) => {
     await serviceGruposOpcoes.removeInsumo(req.params.itemId, req.params.insumoId)
+
+    return res.status(204).send()
+})
+
+// Produtos variaveis
+
+exports.createProdutoVariavel = catchAsync(async (req, res) => {
+    let produtoCreated = await serviceVariacoes.createProdutoVariavel(req.body)
+
+    return res.status(201).json(produtoCreated)
+})
+
+exports.findVariacoes = catchAsync(async (req, res) => {
+    let variacoes = await serviceVariacoes.findVariacoes(req.params.id)
+
+    return res.status(200).json(variacoes)
+})
+
+exports.addVariacoes = catchAsync(async (req, res) => {
+    let variacoesAdd = await serviceVariacoes.addVariacoes(req.params.id, req.body)
+
+    return res.status(200).json(variacoesAdd)
+})
+
+exports.updateVariacao = catchAsync(async (req, res) => {
+    let updatedVariacao = await serviceVariacoes.updateVariacao(req.params.varId, req.body)
+
+    return res.status(200).json(updatedVariacao)
+})
+
+exports.deleteVariacao = catchAsync(async (req, res) => {
+    await serviceVariacoes.deleteVariacao(req.params.varId)
 
     return res.status(204).send()
 })

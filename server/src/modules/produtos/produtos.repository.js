@@ -131,18 +131,39 @@ exports.findInsumosById = async (id) => {
     return result.rows
 }
 
-exports.update = async (id, body) => {
+exports.update = async (id, body, insumos=null) => {
     let campos = Object.keys(body)
     let values = Object.values(body)
+
+    let resultInsumos;
 
     campos = campos.map((val, idx)=> `${val} = $${idx+1}`)
     values.push(id)
 
-    let querie = `UPDATE produtos SET ${campos.join(', ')} WHERE id = $${campos.length + 1} RETURNING *`
+    let client = await pool.connect()
 
-    let result = await pool.query(querie, values)
+    try{
+        client.query('BEGIN')
 
-    return result.rows
+        let querie = `UPDATE produtos SET ${campos.join(', ')} WHERE id = $${campos.length + 1} RETURNING *`
+
+        let result = await client.query(querie, values)
+
+        if(insumos){
+            console.log(await this.updateInsumos(id, insumos))
+            resultInsumos = await this.updateInsumos(id, insumos)
+        }
+
+        client.query('COMMIT')
+
+        return result.rows
+    }catch(error){
+        console.log(error)
+        client.query('ROLLBACK')
+        throw error
+    }finally{
+        client.release()
+    }
 }
 
 exports.updateInsumos = async (produtoId, insumos) => {
@@ -153,9 +174,7 @@ exports.updateInsumos = async (produtoId, insumos) => {
 
     let values = []
     let valuesQuerie = insumos.map((i) => {
-        values.push(produtoId)
-        values.push(i.insumo_id)
-        values.push(i.quantidade)
+        values.push(produtoId, i.insumo_id, i.quantidade)
 
         let value = `($${index}, $${index+1}, $${index+2})`
         index += 3

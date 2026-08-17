@@ -1,5 +1,11 @@
 const pool = require('../../database/connection.js')
 
+exports.findAtributosArryId = async (arr) => {
+    let result = await pool.query("SELECT * FROM atributos WHERE id = ANY($1)", [arr])
+
+    return result.rows
+}
+
 exports.save = async (nome) => {
     let result = await pool.query('INSERT INTO atributos(nome) VALUES ($1) RETURNING *', [nome])
 

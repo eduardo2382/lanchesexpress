@@ -1,6 +1,9 @@
 const repository = require('./atributos.repository.js')
 const { ValidationError, ConflictError, NotFoundError, UnprocessableEntityError } = require('../../error/AppError.js')
 
+exports.existsAtributoArrayId = async (arr) => {
+    return await repository.findAtributosArryId(arr)
+}
 
 exports.existsAtributoId = async (id) => {
     return (await repository.findById(id)).length > 0

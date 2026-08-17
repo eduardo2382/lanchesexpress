@@ -2,6 +2,7 @@ const { ValidationError } = require('../../error/AppError.js')
 
 const CAMPOS_PERMITIDOS_PRODUTO = ['produto_pai_id', 'categoria_id', 'nome', 'tipo', 'preco_base', 'vai_para_cozinha', 'status', 'insumos', 'grupos']
 const CAMPOS_PERMITIDOS_GRUPO = ['nome', 'obrigatorio', 'tipo_selecao', 'tipo_preco', 'status']
+const CAMPOS_PERMITIDOS_VARIACOES = ['nome', 'preco_base', 'atributos', 'insumos']
 const TIPOS_VALIDOS = ['simples', 'montavel']
 const STATUS_VALIDOS_QUERY = ['ativo', 'inativo', 'excluido']
 const TIPO_SELECAO_VALIDOS = ['unica', 'multipla']
@@ -18,7 +19,7 @@ exports.validateCreateCampos = (body) => {
 
     if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
 
-    if(!body.nome) throw new ValidationError('Nome do produto faltando!', {campo: 'nome', motivo: 'obrigatorio'})
+    if(!body.nome || body.nome.length == 0) throw new ValidationError('Nome do produto faltando!', {campo: 'nome', motivo: 'obrigatorio'})
     if(!isLowercase(body.nome)) throw new ValidationError('Nome do produto deve ser minusculo!', {campo: 'nome', motivo: 'invalido'})
 
     if(!body.categoria_id) throw new ValidationError('Id da categoria do produto faltando!', {campo: 'categoria_id', motivo: 'obrigatorio'})
@@ -30,6 +31,42 @@ exports.validateCreateCampos = (body) => {
     if(body.preco_base && (typeof body.preco_base) != 'number') throw new ValidationError('Preco base deve ser um numero')
 
     if(!Array.isArray(body.insumos)) throw new ValidationError('Insumos deve ser uma lista', {campo: 'insumos', motivo: 'invalido'})   
+}
+
+exports.validateCreateVariavelCampos = (body) => {
+    if(!body.nome || body.nome.length == 0) throw new ValidationError('Nome do produto faltando!', {campo: 'nome', motivo: 'obrigatorio'})
+    if(!isLowercase(body.nome)) throw new ValidationError('Nome do produto deve ser minusculo!', {campo: 'nome', motivo: 'invalido'})
+
+    if(!body.categoria_id) throw new ValidationError('Id da categoria faltando!', {campo: 'categoria_id', motivo: 'obrigatorio'})
+
+    if(!body.variacoes || body.variacoes.length == 0) throw new ValidationError('Produto sem variacoes!')
+
+    if(!Array.isArray(body.variacoes)) throw new ValidationError('Variacoes deve ser um array!', {campo: 'variacoes', motivo: 'invalido'})
+
+    body.variacoes.forEach((variacao) => {
+        this.validateVariacao(variacao)
+    })
+}
+
+exports.validateVariacao = (variacao) => {
+    let camposVar = Object.keys(variacao)
+
+    if(camposVar.length == 0) throw new ValidationError('Nenhum campo da variacao enviado')
+
+    let camposInvalid = camposVar.filter((c) => !CAMPOS_PERMITIDOS_VARIACOES.includes(c))
+
+    let camposMissing = CAMPOS_PERMITIDOS_VARIACOES.filter((c) => !camposVar.includes(c) && c != 'insumos')
+
+    if(camposInvalid.length > 0) throw new ValidationError(`Campos de variacao invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
+    if(camposMissing.length > 0) throw new ValidationError(`Campos de variacao faltantes: ${camposMissing.join(', ')}`, {campo: camposMissing, motivo: 'obrigatorio'})
+
+    if((typeof variacao.nome) != 'string' || variacao.nome.length == 0) throw new ValidationError('Nome da variacao faltando!', {campo: 'nome', motivo: 'obrigatorio'})
+
+    if((typeof variacao.preco_base) != 'number') throw new ValidationError('Preco base deve ser um numero!', {campo: 'preco_base', motivo: 'invalido'})
+
+    if(variacao.atributos.length == 0) throw new ValidationError('Variacao sem atributos!')
+
+    if(!Array.isArray(variacao.atributos)) throw new ValidationError('Atributos deve ser um array!', {campo: 'atributos', motivo: 'invalido'})
 }
 
 exports.validateUpdateCampos = (body) => {
@@ -45,6 +82,25 @@ exports.validateUpdateCampos = (body) => {
     if(!body.nome && !isLowercase(body.nome)) throw new ValidationError('Nome do produto deve ser minusculo!', {campo: 'nome', motivo: 'invalido'})
 
     if(body.status && !['ativo', 'inativo'].includes(body.status)) throw new ValidationError('Status deve ser: ativo ou inativo')
+
+    if(body.vai_para_cozinha && (typeof body.vai_para_cozinha) !== 'boolean') throw new ValidationError('Vai para cozinha deve ser um booleano!')
+    
+    if(body.preco_base && (typeof body.preco_base) != 'number') throw new ValidationError('Preco base deve ser um numero')
+}
+
+exports.validateUpdateVariacaoCampos = (body) => {
+    let camposBody = body ? Object.keys(body) : []
+    if(camposBody.length == 0) throw new ValidationError('Nenhum campo para atualizar')
+
+    let camposInvalid = camposBody.filter((c) => !['nome', 'preco_base', 'insumos', 'vai_para_cozinha', 'status'].includes(c))
+    if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
+
+    if(camposBody.includes('atributos')) throw new ValidationError('Nao é possivel atualizar os atributos do produto', {campo: 'atributos', motivo: 'invalido'})
+    if(camposBody.includes('produto_pai_id')) throw new ValidationError('Nao é possivel atualizar o produto pai', {campo: 'produto_pai_id', motivo: 'invalido'})
+
+    if(body.nome && !isLowercase(body.nome)) throw new ValidationError('Nome do produto deve ser minusculo!', {campo: 'nome', motivo: 'invalido'})
+
+    if(body.status && !['ativo', 'inativo'].includes(body.status)) throw new ValidationError('Status invalido!', {campo: 'status', motivo: 'invalido'})
 
     if(body.vai_para_cozinha && (typeof body.vai_para_cozinha) !== 'boolean') throw new ValidationError('Vai para cozinha deve ser um booleano!')
     
