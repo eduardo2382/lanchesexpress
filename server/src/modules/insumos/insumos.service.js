@@ -192,3 +192,19 @@ exports.ajustInsumo = async (id, body) => {
 
     return updatedInsumo
 }
+
+exports.subtractInsumo = async(insumos, client=undefined) => {
+    for(let [insumo_id, quantidade] of insumos){
+        let insumo = (await repository.findById(insumo_id))[0]
+
+        if(!insumo)throw new ValidationError("O insumo nao existe")
+
+        if((insumo.quantidade_atual - quantidade) < 0)throw new UnprocessableEntityError(`Estoque do insumo ${insumo.nome} insuficiente!`)
+
+        if(insumo.status != 'ativo'){
+            insumos.delete(insumo_id)
+        }
+    }
+
+    await repository.subtractInsumo(insumos, client)
+}

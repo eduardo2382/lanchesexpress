@@ -107,6 +107,10 @@ async function validateProdutoPai(produto_id) {
     if(produtoPai.length == 0) throw new NotFoundError('Produto pai nao encotrado!') 
 }
 
+exports.findProdutoArrayId = async (arrayIds) => {
+    return await repository.findProdutosArryId(arrayIds)
+}
+
 exports.createProduto = async (body) => {
     validator.validateCreateCampos(body)
     

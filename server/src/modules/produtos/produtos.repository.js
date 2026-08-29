@@ -81,6 +81,12 @@ exports.findByName = async (nome, categoriaId) => {
     return result.rows
 }
 
+exports.findProdutosArryId = async (array) => {
+    let result = await pool.query("SELECT * FROM produtos WHERE id = ANY($1)", [array])
+
+    return result.rows
+}
+
 exports.existsProdutoNome = async (nome, categoriaId) => {
     let result = await pool.query('SELECT * FROM produtos WHERE nome = $1 AND categoria_id = $2', [nome, categoriaId])
 

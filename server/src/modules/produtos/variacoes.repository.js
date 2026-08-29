@@ -143,3 +143,23 @@ exports.findVariacoes = async (produtoPaiId) => {
 
     return result.rows
 }
+/*
+`
+SELECT 
+    p.id, 
+    p.nome, 
+    p.preco_base, 
+    p.status, 
+    json_agg(
+        json_build_object(
+            'atributo_id', pa.atributo_id, 
+            'nome', a.nome, 
+            'valor', pa.valor 
+        )
+    ) AS atributos 
+    FROM produtos p 
+    LEFT JOIN produto_atributos pa ON pa.produto_id = p.id 
+    LEFT JOIN atributos a ON pa.atributo_id = a.id 
+    WHERE produto_pai_id = $1 GROUP BY p.id;
+`
+*/

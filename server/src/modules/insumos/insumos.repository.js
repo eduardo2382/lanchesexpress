@@ -1,6 +1,6 @@
 const pool = require('../../database/connection.js')
 const MovimentacaoRepository = require('../estoque/movimentacoes.repository.js')
-const movimentacaoRepository = new MovimentacaoRepository()
+const movimentacaoRepository = require('../estoque/movimentacoes.repository.js')
 
 exports.save = async ({nome, tipo_medida, quantidade_atual, quantidade_minima}) => {
     let text = "INSERT INTO insumos(nome, tipo_medida, quantidade_atual, quantidade_minima) VALUES ($1, $2, $3, $4) RETURNING *"
@@ -63,7 +63,7 @@ exports.ajust = async (id, delta, body) => {
 
         let insumo = await client.query('UPDATE insumos SET quantidade_atual = quantidade_atual + $1 WHERE id = $2 RETURNING *', [delta, id])
 
-        await movimentacaoRepository.save(client, id, delta, body)
+        await movimentacaoRepository.register(client, id, delta, body)
 
         await client.query('COMMIT')
 
@@ -73,5 +73,21 @@ exports.ajust = async (id, delta, body) => {
         throw error
     }finally{
         await client.release()
+    }
+}
+
+exports.subtractInsumo = async (insumos, client=undefined) => {
+    if(!client){
+        client = pool.connect()
+    }
+
+    for (const [insumo_id, quantidadeNecessaria] of insumos) {
+        const result = await client.query(
+            `UPDATE insumos
+            SET quantidade_atual = quantidade_atual - $1
+            WHERE id = $2 AND quantidade_atual >= $1
+            RETURNING quantidade_atual`,
+            [quantidadeNecessaria, insumo_id]
+        );
     }
 }

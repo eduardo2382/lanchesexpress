@@ -45,6 +45,10 @@ async function validateInsumos(insumosArray){
     if(idsInvalid.length > 0) throw new NotFoundError(`Insumos nao encontrados: ${idsInvalid.join(', ')}`)
 }
 
+exports.findOpcaoItemIds = async (arrayIds) => {
+    return await repositoryGruposOpcoes.findOpcaoItemArryId(arrayIds)
+}
+
 exports.findGruposById = async (id) => {
     let produto = (await validateProdutoId(id))[0]
 

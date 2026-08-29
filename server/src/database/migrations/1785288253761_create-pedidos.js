@@ -3,7 +3,8 @@ export const up = (pgm) => {
     pgm.createTable('pedidos', {
         id: 'id',
         valor_total: {type: 'decimal(10,2)', notNull: true},
-        criado_em: {type: 'timestamp', default: pgm.func('current_timestamp')}
+        criado_em: {type: 'timestamp', default: pgm.func('current_timestamp')},
+        status: {type: 'varchar(15)', check: "status IN ('recebido', 'cancelado') ", notNull: true, default: 'recebido'}
     })
 
     pgm.createTable('pedido_itens', {

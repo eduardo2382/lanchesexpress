@@ -18,6 +18,12 @@ exports.existsGrupo = async (grupoId) => {
     return (result.rows).length > 0
 }
 
+exports.findOpcaoItemArryId = async (arrayIds) => {
+    let result = await pool.query("SELECT * FROM grupo_opcao_itens WHERE id = ANY($1)", [arrayIds])
+
+    return result.rows
+}
+
 exports.saveGruposComplete = async (produtoId, gruposProduto, clientAt) => {
     let client;
     
