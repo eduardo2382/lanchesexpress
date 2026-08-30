@@ -6,7 +6,7 @@ export const up = (pgm) => {
         numero: {type: 'varchar(50)'},
         chave_acesso: {type: 'integer'},
         status: {type: 'varchar(20)', check: "status IN ('emitida', 'cancelada', 'erro')", notNull: true, default: 'emitida'},
-        emitida_em: {type: 'timestamp', default: pgm.func('current_timestamp')}
+        emitida_em: {type: 'timestamptz', default: pgm.func('current_timestamp')}
     })
 
     pgm.addConstraint('notas_fiscais', 'constraint_unica_pedidoId', 'UNIQUE(pedido_id)');
@@ -18,7 +18,7 @@ export const up = (pgm) => {
         quantidade: {type: 'decimal(10,3)', notNull: true},
         motivo: {type: 'varchar(30)', check: "motivo IN ('venda', 'compra', 'perda', 'ajuste_manual')"},
         pedido_id: {type: 'integer', references: 'pedidos', default: null},
-        criado_em: {type: 'timestamp', default: pgm.func('current_timestamp')}
+        criado_em: {type: 'timestamptz', default: pgm.func('current_timestamp')}
     })
 
 };

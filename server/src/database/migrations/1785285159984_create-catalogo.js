@@ -29,7 +29,7 @@ export const up = (pgm) => {
         preco_base: { type: 'decimal(10,2)', notNull: true, default: 0 },
         vai_para_cozinha: { type: 'boolean', notNull: true, default: false },
         status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'},
-        criado_em: {type: 'timestamp', default: pgm.func('current_timestamp')}
+        criado_em: {type: 'timestamptz', default: pgm.func('current_timestamp')}
     });
    
     pgm.createTable('produto_insumos', {
