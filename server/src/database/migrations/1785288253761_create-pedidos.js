@@ -26,7 +26,8 @@ export const up = (pgm) => {
 
     pgm.createTable('formas_pagamento', {
         id: 'id',
-        nome: {type: 'varchar(50)', notNull: true}
+        nome: {type: 'varchar(50)', notNull: true},
+        status: {tytpe: 'varchar(10)', check: "status IN ('ativo', 'excluido') ", default: 'ativo'}
     })
 
     pgm.addConstraint('formas_pagamento', 'constraint_unica_nome', 'UNIQUE(nome)');
