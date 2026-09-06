@@ -7,7 +7,7 @@ exports.save = async (nome) => {
 }
 
 exports.findAll = async (statusQuery) => {
-    let result = await pool.query('SELECT * FROM categorias WHERE status = ANY($1)', [statusQuery])
+    let result = await pool.query('SELECT * FROM categorias WHERE status = ANY($1) ORDER BY criado_em', [statusQuery])
 
     return result.rows
 }

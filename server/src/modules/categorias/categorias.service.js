@@ -61,10 +61,10 @@ exports.updateCategoria = async (id, body) => {
 
     if((body.status != undefined) && (categoria.status == 'excluido')) throw new UnprocessableEntityError('Categoria excluida nao pode ter seu status modificado!', {statusAtual: 'excluido'})
 
-    return await repository.update(id, body)        
+    return (await repository.update(id, body))[0]
 }
 
-exports.updateCategoria = async (id, body) => {
+exports.updateStatusCategoria = async (id, body) => {
     let camposList = ['status']
     if(id == undefined) throw new ValidationError('Id da categoria faltando!', {campo: 'id', motivo: 'obrigatorio'})
 

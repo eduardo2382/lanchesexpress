@@ -2,7 +2,8 @@ export const up = (pgm) => {
     pgm.createTable('categorias', {
         id: 'id',
         nome: { type: 'varchar(100)', notNull: true },
-        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'},
+        criado_em: {type: 'timestamptz', default: pgm.func('current_timestamp')}
     });
 
     pgm.createTable('insumos', {
