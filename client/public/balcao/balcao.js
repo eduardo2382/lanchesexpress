@@ -18,7 +18,6 @@ export function changeScreen(tela, dados){
 
         case 'confirmacao':
             renderConfirmacao(app, dados)
-            renderConfirmacao()
             break
     }
 }
