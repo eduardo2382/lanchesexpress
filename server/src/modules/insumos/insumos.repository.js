@@ -63,7 +63,7 @@ exports.ajust = async (id, delta, body) => {
 
         let insumo = await client.query('UPDATE insumos SET quantidade_atual = quantidade_atual + $1 WHERE id = $2 RETURNING *', [delta, id])
 
-        await movimentacaoRepository.register(client, id, delta, body)
+        await movimentacaoRepository.register(client, id, body)
 
         await client.query('COMMIT')
 

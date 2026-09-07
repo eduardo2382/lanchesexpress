@@ -120,7 +120,7 @@ exports.removeInsumo = async (id) => {
 exports.ajustInsumo = async (id, body) => {
     let delta;
     let updatedInsumo;
-    let tiposList = ['entrada', 'saida', 'ajuste']
+    let tiposList = ['entrada', 'saida']
     let motivosList = ['compra', 'perda', 'ajuste_manual']
     let camposList = ['tipo', 'motivo', 'quantidade']
 
@@ -138,7 +138,7 @@ exports.ajustInsumo = async (id, body) => {
 
     if(body.tipo == undefined) throw new ValidationError('Tipo da movimentacao faltando!', {campo: 'tipo', motivo: 'obrigatorio'})
 
-    if(!tiposList.includes(body.tipo)) throw new ValidationError('Tipo deve ser: entrada, saida ou ajuste', {campo: 'tipo', motivo: 'invalido'})
+    if(!tiposList.includes(body.tipo)) throw new ValidationError('Tipo deve ser: entrada ou saida', {campo: 'tipo', motivo: 'invalido'})
 
     if(body.motivo == undefined) throw new ValidationError('Motivo da movimentacao faltando!', {campo: 'motivo', motivo: 'obrigatorio'})
 
@@ -149,17 +149,6 @@ exports.ajustInsumo = async (id, body) => {
     if(body.quantidade == undefined) throw new ValidationError('Quantidade da movimentacao faltando!', {campo: 'quantidade', campo: 'obrigatorio'})
 
     switch (body.tipo) {
-        case 'ajuste':
-            delta = body.quantidade - quantidadeAtual
-            
-            updatedInsumo = await repository.ajust(id, delta, {
-                tipo: body.tipo, 
-                motivo: body.motivo,
-                movimentacao_quantidade: delta
-            })
-            
-            break;
-
         case 'entrada':
             delta = +body.quantidade
 

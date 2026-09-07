@@ -1,6 +1,6 @@
 const pool = require('../../database/connection.js')
 
-exports.register = async (client, insumoId, delta, dados) =>{
+exports.register = async (client, insumoId, dados) =>{
     let campos = []
     let values = []
     let keys = []
@@ -18,7 +18,7 @@ exports.register = async (client, insumoId, delta, dados) =>{
 
     campos.push(`quantidade`)
     keys.push(`$${index}`)
-    values.push(delta)
+    values.push(dados.movimentacao_quantidade)
     index++
 
     campos.push(`motivo`)

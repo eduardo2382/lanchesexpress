@@ -12,7 +12,8 @@ export const up = (pgm) => {
         tipo_medida: { type: 'varchar(20)', check: "tipo_medida IN ('unidade', 'peso', 'volume')", notNull: true },
         quantidade_atual: {type: 'decimal(10,3)', notNull: true, default: 0},
         quantidade_minima: {type: 'decimal(10,3)', notNull: true, default: 0},
-        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
+        status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'},
+        criado_em: {type: 'timestamptz', default: pgm.func('current_timestamp')}
     });
 
     pgm.createTable('atributos', {
