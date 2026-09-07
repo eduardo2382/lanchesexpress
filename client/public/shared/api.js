@@ -10,9 +10,16 @@ async function request(endpoint, options = {}) {
   })
 
   if (!resposta.ok) {
-    let erro = await resposta.json().catch(() => ({}))
-    throw new Error(erro.mensagem || `Erro ${resposta.status} ao acessar ${endpoint}`)
-  }
+    let corpo = await resposta.json().catch(() => ({}))
+    let erroInfo = corpo.error || {}
+
+    let erro = new Error(erroInfo.message || `Erro ${resposta.status} ao acessar ${endpoint}`);
+    erro.status = resposta.status;
+    erro.code = erroInfo.code;
+    erro.details = erroInfo.details;
+
+    throw erro;
+}
 
   if (resposta.status === 204) return null
   return resposta.json()
@@ -29,11 +36,36 @@ export const api = {
             method: 'POST',
             body: JSON.stringify(dadosCategoria)
         }),
-        atualizar: (id, dados) => request('/categoria', {
+        atualizar: (id, dados) => request(`/categoria/${id}`, {
             method: 'PATCH',
             body: JSON.stringify(dados)
         }),
-        deletar: (id) => request('/categoria', {
+        atualizarStatus: (id, status) => request(`/categoria/${id}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({status: status})
+        }),
+        deletar: (id) => request(`/categoria/${id}`, {
+            method: 'DELETE'
+        })
+    },
+    insumos: {
+        listar: (filtros = {}) => {
+            let query = new URLSearchParams(filtros).toString()
+            return request(`/insumo/${query ? `?${query}` : ''}`)
+        },
+        criar: (dadosInsumo) => request('/insumo', {
+            method: 'POST',
+            body: JSON.stringify(dadosInsumo)
+        }),
+        atualizarStatus: (id, status) => request(`/insumo/${id}/status`, {
+            method: 'PATCH',
+            body: JSON.stringify({status: status})
+        }),
+        atualizar: (id, dados) => request(`/insumo/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(dados)
+        }),
+        deletar: (id) => request(`/insumo/${id}`, {
             method: 'DELETE'
         })
     }

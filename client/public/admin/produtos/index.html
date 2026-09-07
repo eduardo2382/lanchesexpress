@@ -13,47 +13,164 @@
         <h1 class="w-full text-white text-3xl font-bold p-4">Lanches Express</h1>
     </header>
 
-    <main class="flex-1 bg-[#fafafa] p-6 app">
-        <h2 class="text-2xl font-bold">Categorias</h2>
-        <span class="text-[#A3A3A3] numbers-categorias">0 categorias - 0 ativas</span>
-
-        <section class="flex flex-col mt-6">
-            <ul class="flex flex-col gap-4 categorias-list">
-                <!--
-                <li class="text-xl flex items-center justify-between bg-white pr-2 pl-3 py-3 border border-[#E5E5E5] rounded-lg active:bg-[#E5E5E5] categoria-element">
-                    <span class="font-bold">
-                        
-                        Almoço
-                    </span>
-                    <span class="flex items-center gap-2">
-                        <span class="bg-black text-white font-bold px-2 py-1 text-lg border border-transparent rounded-lg toggle-status">Ativo</span>
-                        <span class="text-2xl">
-                            <i class="p-1.5 border border-[#E5E5E5] rounded-lg active:bg-[#f1f1f1] ri-pencil-line"></i>
-                            <i class="p-1.5 border border-[#E5E5E5] rounded-lg active:bg-[#F1F1F1] ri-delete-bin-line"></i>
-                        </span>
-                    </span>
-                </li>
-                -->
-            </ul>
+    <main class="flex-1 flex flex-col gap-4 relative bg-[#fafafa] p-6 overflow-y-auto app">
+        <section class="flex flex-col items-start gap-2">
+            <button class="button-back">
+                <i class="text-2xl text-black font-bold p-2 rounded-lg active:bg-black/10 ri-arrow-left-line"></i>
+            </button>
+            <div class="flex flex-col">
+                <h2 class="text-2xl font-bold title-categoria">Novo produto</h2>
+                <span class="text-[#A3A3A3] produtos-number">Cadastre o novo produto.</span>
+            </div>
         </section>
+
+        <section class="flex flex-row gap-2">
+            <button class="w-full text-black text-lg font-bold bg-white px-3 py-2 border border-[#262626] rounded-lg active:bg-black/80 cancel-produto ">Cancelar</button>
+            <button type="submit" form="form-produto" class="w-full text-white text-lg font-bold bg-black px-3 py-2 rounded-lg active:bg-black/80 create-produto">
+                Criar produto
+            </button>
+        </section>
+
+        <section class="flex flex-col border border-[#262626] rounded-xl shadow-md">
+            <h3 class="text-xl font-bold border-b border-b-[#262626] px-4 py-3">Dados principais</h3>
+
+            <form id="form-produto" class="flex flex-col gap-4 rounded-xl p-4">
+                <div>
+                    <label for="nome" class="text-sm text-[#737373] font-bold uppercase">nome do produto</label>
+                    <input type="text" name="nome" id="nome" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" placeholder="Tapioca" required>
+                </div>
+
+                <div>
+                    <label for="categoria" class="text-sm text-[#737373] font-bold uppercase">categoria</label>
+                    <select name="categoria" id="categoria" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" required>
+                        <option value="">Pedidos</option>
+                        <option value="">Bebidas</option>
+                        <option value="">Sobremesa</option>
+                        <option value="">Almoco</option>
+                        <option value="">Outros</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="preco-base" class="text-sm text-[#737373] font-bold uppercase">preço base (opcional)</label>
+                    <input type="number" name="preco-base" id="preco-base" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" placeholder="R$ 0,00" required>
+                </div>
+                
+                <div>
+                    <label for="tipo" class="text-sm text-[#737373] font-bold uppercase">Tipo do produto</label>
+                    <select name="tipo" id="tipo" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" required>
+                        <option value="simples">Simples</option>
+                        <option value="variavel">Variavel</option>
+                        <option value="montavel">Montavel</option>
+                    </select>
+                    <span class="text-sm text-[#737373] tipo-description">Vai direto para o carrinho, sem personalização</span>
+                </div>
+            </form>
+        </section>
+
+        <section class="flex flex-col items-start bg-white border border-[#262626] rounded-xl shadow-md hidden">
+            <div class="w-full flex flex-col border-b border-b-[#262626] header-grupo">
+                <div class="flex flex-row justify-between p-4">
+                    <h3 class="max-w-3/4 text-2xl font-bold">Tamanho</h3>
+                    <span class="">
+                        <i class="text-2xl p-1.5 border border-[#E5E5E5] rounded-lg active:bg-[#f1f1f1] ri-pencil-line cursor-pointer button-edit"></i>
+                        <i class="text-2xl p-1.5 border border-[#E5E5E5] rounded-lg active:bg-[#F1F1F1] ri-delete-bin-line cursor-pointer button-delete"></i>
+                    </span>
+                </div>
+                <div class="flex flex-wrap gap-1 px-4 pb-4">
+                    <span class="text-[#737373] font-bold bg-[#E5E5E5] rounded-md">Obrigatorio</span>
+                    <span class="text-[#737373] font-bold bg-[#E5E5E5] rounded-md">1-1 itens</span>
+                    <span class="text-[#737373] font-bold bg-[#E5E5E5] rounded-md">Caixa de seleção</span>
+                    <span class="text-[#737373] font-bold bg-[#E5E5E5] rounded-md">Nao se aplica</span>
+                </div>
+            </div>
+            
+
+            <div class="w-full flex flex-col gap-y-4 p-4">
+                <div class="flex flex-row items-center justify-between">
+                    <h5 class="text-sm font-bold text-[#A3A3A3] uppercase">variacoes</h5>
+                    <span>
+                        <i class="text-2xl p-1.5 border border-[#E5E5E5] rounded-lg active:bg-[#f1f1f1] ri-pencil-line cursor-pointer button-edit"></i>
+                        <i class="text-2xl p-1.5 border border-[#E5E5E5] rounded-lg active:bg-[#F1F1F1] ri-delete-bin-line cursor-pointer button-delete"></i>
+                    </span>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <div class="flex flex-row justify-between text-xl font-bold">
+                        <span>Pequeno</span>
+                        <span>R$ 4,00</span>
+                    </div>
+                    <div class="flex flex-col gap-px bg-[#737373]">
+                        <span class="flex flex-row justify-between text-[#737373] font-bold bg-white">
+                            <span>Frango</span>
+                            <span>30g</span>
+                        </span>
+                        <span class="flex flex-row justify-between text-[#737373] font-bold bg-white">
+                            <span>Frango</span>
+                            <span>30g</span>
+                        </span>
+                        <span class="flex flex-row justify-between text-[#737373] font-bold bg-white">
+                            <span>Frango</span>
+                            <span>30g</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="flex flex-row justify-between text-xl font-bold">
+                        <span>Pequeno</span>
+                        <span>R$ 4,00</span>
+                    </div>
+                    <div class="flex flex-col gap-px bg-[#737373]">
+                        <span class="flex flex-row justify-between text-[#737373] font-bold bg-white">
+                            <span>Frango</span>
+                            <span>30g</span>
+                        </span>
+                        <span class="flex flex-row justify-between text-[#737373] font-bold bg-white">
+                            <span>Frango</span>
+                            <span>30g</span>
+                        </span>
+                        <span class="flex flex-row justify-between text-[#737373] font-bold bg-white">
+                            <span>Frango</span>
+                            <span>30g</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <button class="w-full text-white font-bold bg-black rounded-lg p-2 active:bg-black/80 button-add-group hidden">
+            <i class="ri-add-line"></i>
+            <span class="button-add-group-name"></span>
+        </button>
+
     </main>
 
-    <footer class="w-full fixed bottom-0 flex flex-row justify-between font-bold text-[#737373] bg-black py-4 px-6 shrink-0">
+    <!--
+    <div class="fixed inset-0 flex items-center justify-center bg-black/50 p-4">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-sm p-6">
+            <h2>Adicionar grupo</h2>
+        </div>
+    </div>
+    -->
+
+    <footer class="w-full bottom-0 flex flex-row justify-between font-bold text-[#737373] bg-black py-4 px-3 shrink-0">
         <a href="../index.html" class="flex flex-col items-center">
             <i class="ri-numbers-line"></i>
             <p>Dashboard</p>
         </a>
-        <a href="../vendas/index.html" class="flex flex-col items-center">
+        <a href="../vendas/index.html" class="flex flex-col items-center cursor-pointer">
             <i class="ri-receipt-line"></i>
             <p>Vendas</p>
         </a>
         <a href="index.html" class="flex flex-col items-center text-white">
-            <i class="ri-box-3-line"></i>
+            <i class="ri-shopping-basket-2-fill"></i>
             <p>Produtos</p>
         </a>
+        <a href="../estoque/index.html" class="flex flex-col items-center">
+            <i class="ri-box-3-line"></i>
+            <p>Estoque</p>
+        </a>
     </footer>
-
-    
 
     <script type="module" src="script.js"></script>
 </body>

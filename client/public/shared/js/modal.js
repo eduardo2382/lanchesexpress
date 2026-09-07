@@ -171,13 +171,13 @@ export class ModalConfirmar extends Modal {
     card.innerHTML = `
       <h2 class="text-lg font-semibold text-gray-900">${this._escapar(this.titulo)}</h2>
       <p class="mt-2 text-sm text-[#737373]">${this._escapar(this.mensagem)}</p>
-      <div class="mt-6 flex justify-end gap-3">
+      <div class="mt-6 w-full flex flex-row gap-3">
         <button type="button" data-acao="cancelar"
-          class="px-4 py-2 text-sm rounded-md border border-[#E5E5E5] text-gray-700 active:bg-gray-50">
+          class="w-full px-4 py-2 text-sm rounded-md border border-[#E5E5E5] text-gray-700 active:bg-gray-50">
           ${this._escapar(this.textoCancelar)}
         </button>
         <button type="button" data-acao="confirmar"
-          class="px-4 py-2 text-sm font-bold rounded-md text-white bg-black active:bg-white">
+          class="w-full px-4 py-2 text-sm font-bold rounded-md text-white bg-black active:bg-white">
           ${this._escapar(this.textoConfirmar)}
         </button>
       </div>
@@ -202,14 +202,6 @@ export class ModalConfirmar extends Modal {
  * a string digitada se confirmou, null se cancelou ou fechou.
  */
 export class ModalInput extends Modal {
-  /**
-   * @param {Object} opcoes
-   * @param {string} opcoes.titulo
-   * @param {string} [opcoes.valorInicial='']
-   * @param {string} [opcoes.placeholder='']
-   * @param {string} [opcoes.textoConfirmar='Salvar']
-   * @param {string} [opcoes.textoCancelar='Cancelar']
-   */
   constructor(app, {
     titulo,
     valorInicial = '',
@@ -231,9 +223,6 @@ export class ModalInput extends Modal {
     return new Promise((resolve) => {
       this._resolve = resolve;
       super.open();
-      // foca e seleciona o texto assim que o modal entra no DOM
-      this._input?.focus();
-      this._input?.select();
     });
   }
 
@@ -252,7 +241,7 @@ export class ModalInput extends Modal {
     card.innerHTML = `
       <h2 class="text-lg font-semibold text-gray-900">${this._escapar(this.titulo)}</h2>
       <input type="text" data-campo="valor"
-        class="mt-4 w-full rounded-md border border-gray-300 px-3 py-2 text-sm
+        class="mt-4 w-full rounded-md border border-gray-300 px-3 py-2 text-lg
                focus:outline-none focus:ring-2 focus:ring-black"
         placeholder="${this._escapar(this.placeholder)}"
         value="${this._escapar(this.valorInicial)}">
@@ -287,3 +276,105 @@ export class ModalInput extends Modal {
     return div.innerHTML;
   }
 }
+
+export class ModalInsumo extends Modal {
+    #resolve;
+    #form
+
+    constructor(app, type="create", {
+        nameInitial = '', 
+        typeInitial = '', 
+        quantMinimaInitial = ''
+    } = {}){
+        super(app, { fechavel: true });
+        this.#resolve = null;
+        this.#form = null;
+        this.type = type
+        this.nameInitial = nameInitial
+        this.typeInitial = typeInitial
+        this.quantMinimaInitial = quantMinimaInitial
+    }
+
+    open() {
+        return new Promise((resolve) => {
+            this.#resolve = resolve;
+            super.open();
+        });
+    }
+
+    close(resultado = null) {
+        if (this.#resolve) {
+            this.#resolve(resultado);
+            this.#resolve = null;
+        }
+        super.close();
+    }
+
+    render() {
+        let card = document.createElement('div');
+        card.className = 'flex flex-col gap-4 bg-white rounded-lg shadow-lg w-full max-w-sm p-6';
+        let titleModal = this.type == 'create' ? 'Adicionar insumo:' : 'Editar insumo:'
+
+        card.innerHTML = `
+            <h2 class="text-xl font-semibold text-gray-900">${titleModal}</h2>
+
+            <form id="form-create-insumo" data-campo="form" class="flex flex-col gap-3">
+                <div>
+                    <label for="nome" class="text-sm text-[#737373] font-bold uppercase">nome do insumo</label> 
+                    <input type="text" name="nome" id="nome" data-campo="nome" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" placeholder="Ex: Tapioca" value="${this.nameInitial}" required>
+                </div>
+
+                <div>
+                    <label for="tipo_medida" class="text-sm text-[#737373] font-bold uppercase">tipo de medida</label>
+                    <select name="tipo_medida" id="tipo_medida" data-campo="tipo-medida" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" required>
+                        <option value="unidade" ${this.typeInitial == 'unidade' ? 'selected' : ''}>Unidade</option>
+                        <option value="peso" ${this.typeInitial == 'peso' ? 'selected' : ''}>Peso</option>
+                        <option value="volume" ${this.typeInitial == 'volume' ? 'selected' : ''}>Volume</option>
+                    </select>
+                </div>
+
+                <div class="flex flex-row gap-4">
+                    <div>
+                        <label for="quantidade_minima" class="text-sm text-[#737373] font-bold uppercase">quantidade minima</label>
+                        <input type="number" name="quantidade_minima" id="quantidade_minima" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" value="${this.quantMinimaInitial}" placeholder="0" required>
+                    </div>
+                    <div class="${this.type == 'edit' ? 'hidden' : ''}">
+                        <label for="quantidade_atual" class="text-sm text-[#737373] font-bold uppercase">quantidade atual</label>
+                        <input type="number" name="quantidade_atual" id="quantidade_atual" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" placeholder="0" ${this.type == 'create' ? 'required' : ''}>
+                    </div>
+                </div>
+            </form>
+
+            <div class="w-full flex flex-row gap-3">
+                <button type="button" data-acao="cancelar" class="w-full px-4 py-2 text-sm font-bold rounded-md border border-[#262626] text-[#737373] active:bg-black/10">Cancelar</button>
+                <button type="submit" form="form-create-insumo" data-acao="confirmar"
+                class="w-full px-4 py-2 text-sm font-bold rounded-md text-white bg-black active:bg-black/80">
+                ${this.type == 'create' ? 'Confirmar' : 'Editar'}
+                </button>
+            </div>
+        `;
+
+        this.#form = card.querySelector('[data-campo="form"]');
+
+        const confirmar = (e) => {
+            e.preventDefault(); // impede o reload da página
+            let dados = new FormData(this.#form);
+            let payload = Object.fromEntries(dados.entries());
+
+            payload.nome = payload.nome.toLowerCase()
+
+            if(this.type == 'edit'){
+                delete payload.quantidade_atual
+            }
+
+            this.close(payload)
+        };
+
+        card.querySelector('[data-acao="cancelar"]').addEventListener('click', () => this.close(null));
+
+        this.#form.addEventListener('submit', confirmar);
+
+        return card;
+    }
+}
+

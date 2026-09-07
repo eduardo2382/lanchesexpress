@@ -12,7 +12,7 @@ exports.save = async ({nome, tipo_medida, quantidade_atual, quantidade_minima}) 
 }
 
 exports.findAll = async (statusQuery) => {
-    let result = await pool.query("SELECT * FROM insumos WHERE status = ANY($1)", [statusQuery])
+    let result = await pool.query("SELECT * FROM insumos WHERE status = ANY($1) ORDER BY nome", [statusQuery])
 
     return result.rows
 }

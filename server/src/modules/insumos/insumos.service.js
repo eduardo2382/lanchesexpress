@@ -16,7 +16,7 @@ exports.existsInsumoNome = async (nome) => {
 exports.createInsumo = async (body) => {
     if(body.nome == undefined) throw new ValidationError('Nome do insumo faltando!', {campo: 'nome', motivo: 'obrigatorio'})
 
-    if(body.tipo_medida == undefined) throw new Error('Tipo de medida do insumo faltando!', {campo: 'tipo_medida', motivo: 'obrigatorio'})
+    if(body.tipo_medida == undefined) throw new ValidationError('Tipo de medida do insumo faltando!', {campo: 'tipo_medida', motivo: 'obrigatorio'})
 
     if(await this.existsInsumoNome(body.nome)) throw new ConflictError('Ja existe um insumo com esse nome!', {campo: 'nome'}) 
 
@@ -77,7 +77,7 @@ exports.updateInsumo = async (id, body) => {
 
     if(body.nome != undefined && (await this.existsInsumoNome(body.nome))) throw new ConflictError('Ja existe um insumo com esse nome!', {campo: 'nome'})
 
-    if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))) throw new Validation('Status deve ser: ativo ou inativo', {campo: 'status', motivo: 'invalido'})
+    if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))) throw new ValidationError('Status deve ser: ativo ou inativo', {campo: 'status', motivo: 'invalido'})
 
     if((body.status != undefined) && (insumo.status == 'excluido')) throw new UnprocessableEntityError('Insumo excluido nao pode ter seu status modificado!', {statusAtual: 'excluido'})
 
@@ -99,7 +99,7 @@ exports.updateStatusInsumo = async (id, body) => {
     if(camposBody.length == 0) throw new ValidationError('Nenhum campo para atualizar!')
     if(camposInvalid.length > 0) throw new ValidationError(`Campos invalidos: ${camposInvalid.join(', ')}`, {campo: camposInvalid, motivo: 'invalido'})
 
-    if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))) throw new Validation('Status deve ser: ativo ou inativo', {campo: 'status', motivo: 'invalido'})
+    if((body.status != undefined) && (!['ativo', 'inativo'].includes(body.status))) throw new ValidationError('Status deve ser: ativo ou inativo', {campo: 'status', motivo: 'invalido'})
 
     if((body.status != undefined) && (insumo.status == 'excluido')) throw new UnprocessableEntityError('Insumo excluido nao pode ter seu status modificado!', {statusAtual: 'excluido'})
 

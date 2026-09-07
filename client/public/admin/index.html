@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,14 +8,14 @@
     <link rel="stylesheet" href="../shared/output.css">
     <link rel="stylesheet" href="../shared/vendor/remixicon/fonts/remixicon.css">
 </head>
-<body class="w-full h-full relative">
-    <header class="w-full bg-black">
-        <h1 class="w-full text-white text-3xl font-bold border-b-2 border-[#E5E5E5] p-4">Lanches Express</h1>
+<body class="w-full h-full relative flex flex-col">
+    <header class="w-full bg-black shrink-0">
+        <h1 class="w-full text-white text-3xl font-bold p-4">Lanches Express</h1>
     </header>
 
-    <main class="app"></main>
+    <main class="flex-1 flex flex-col gap-4 relative bg-[#fafafa] p-6 overflow-y-auto app">Dashboard</main>
 
-    <footer class="w-full fixed bottom-0 flex flex-row justify-between font-bold text-[#737373] bg-black py-4 px-6">
+    <footer class="w-full fixed bottom-0 flex flex-row justify-between font-bold text-[#737373] bg-black py-4 px-3 shrink-0">
         <a href="index.html" class="flex flex-col items-center text-white">
             <i class="ri-numbers-line"></i>
             <p>Dashboard</p>
@@ -25,8 +25,12 @@
             <p>Vendas</p>
         </a>
         <a href="produtos/index.html" class="flex flex-col items-center">
-            <i class="ri-box-3-line"></i>
+            <i class="ri-shopping-basket-2-fill"></i>
             <p>Produtos</p>
+        </a>
+        <a href="estoque/index.html" class="flex flex-col items-center">
+            <i class="ri-box-3-line"></i>
+            <p>Estoque</p>
         </a>
     </footer>
 

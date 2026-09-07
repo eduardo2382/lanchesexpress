@@ -1,12 +1,136 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lanches Express - Estoque</title>
     <link rel="stylesheet" href="../../shared/output.css">
+    <link rel="stylesheet" href="../../shared/output.css">
+    <link rel="stylesheet" href="../../shared/vendor/remixicon/fonts/remixicon.css">
 </head>
-<body>
+<body class="w-full h-full relative flex flex-col">
+    <header class="w-full bg-black shrink-0">
+        <h1 class="w-full text-white text-3xl font-bold p-4">Lanches Express</h1>
+    </header>
+
+    <main class="w-full flex-1 flex flex-col gap-4 relative bg-[#fafafa] py-6 px-5 overflow-y-auto app">
+        <ul class="w-full bg-red-100 border-2 border-red-500 text-red-500 rounded-lg p-2 hidden">
+            <li class="flex flex-row justify-between">
+                <span>Frango</span>
+                <span>20 g</span>
+            </li>
+            <li class="flex flex-row justify-between">
+                <span>Macaxeira</span>
+                <span>10 g</span>
+            </li>
+            <li class="flex flex-row justify-between">
+                <span>Pão Jaco</span>
+                <span>2 un</span>
+            </li>
+        </ul>
+
+        <button class="w-full text-white font-bold bg-black rounded-lg p-2 active:bg-black/80 button-create-insumo">
+            <i class="ri-add-line"></i>
+            Adicionar insumo
+        </button>
+
+        <input type="text" name="buscar" id="buscar" class="w-full font-bold font-lg border-2 border-[#262626] px-3 py-2 rounded-lg" placeholder="Buscar insumo">
+
+        <section class="w-full flex flex-col items-center gap-4 section-list-insumos">
+            <ul class="w-full flex flex-col gap-4 hidden list-insumos">
+                <!--
+                <li class="w-full text-xl pr-2 pl-3 py-3 border border-[#E5E5E5] rounded-lg shadow-sm">
+                    <div class="w-full flex flex-row items-center justify-between border-b border-b-[#262626] pb-3">
+                        <span class="max-w-3/6 font-bold text-lg categoria-name capitalize">Escondidinho Pequeno Charque</span>
+                        <span class="flex items-center gap-2">
+                            <button class="bg-black text-white font-bold px-2 py-1 text-lg border rounded-lg cursor-pointer toggle-status">Ativo</button>
+                            <span class="text-2xl text-black">
+                                <i class="p-1.5 border border-[#E5E5E5] rounded-lg active:border-black ri-pencil-line cursor-pointer button-edit"></i>
+                                <i class="p-1.5 border border-[#E5E5E5] rounded-lg active:border-black ri-delete-bin-line cursor-pointer button-delete"></i>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="w-full flex flex-col text-base pt-3">
+                        <span class="flex flex-row justify-between">
+                            <span class="font-medium">Tipo de medida</span>
+                            <span class="text-[#737373]">unidade</span>
+                        </span>
+                        <span class="flex flex-row justify-between">
+                            <span class="font-medium">Quantidade minima</span>
+                            <span class="text-[#737373]">5 un</span>
+                        </span>
+                        <span class="flex flex-row justify-between">
+                            <span class="font-medium">Quantidade atual</span>
+                            <span class="text-[#737373]">100 un</span>
+                        </span>
+                    </div>
+                </li>
+                -->
+            </ul>
+
+            <span class="w-full text-[#737373] font-bold text-center border border-[#262626] rounded-lg p-2 hidden alert-insumos">Sem insumos cadastrados</span>
+        </section>
+    </main>
+
+    <!--
+    <div class="fixed inset-0 flex items-center justify-center bg-black/50 p-4">
+        <div class="flex flex-col gap-4 bg-white rounded-lg shadow-lg w-full max-w-sm p-6">
+            <h2 class="text-xl font-semibold text-gray-900">Editar insumo:</h2>
+
+            <form id="form-create-insumo" class="flex flex-col gap-3">
+                <div>
+                    <label for="nome" class="text-sm text-[#737373] font-bold uppercase">nome do insumo</label>
+                    <input type="text" name="nome" id="nome" value="" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" placeholder="Tapioca" required>
+                </div>
+
+                <div>
+                    <label for="tipo-medida" class="text-sm text-[#737373] font-bold uppercase">tipo de medida</label>
+                    <select name="tipo-medida" id="tipo-medida" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" required>
+                        <option value="unidade">Unidade</option>
+                        <option value="peso" selected>Peso</option>
+                        <option value="volume">Volume</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="quantidade-minima" class="text-sm text-[#737373] font-bold uppercase">quantidade minima</label>
+                    <input type="number" name="quantidade-minima" id="quantidade-minima" value="10" class="w-full font-bold font-lg border border-[#E5E5E5] px-3 py-2 rounded-lg" placeholder="0" required>
+                </div>
+            </form>
+
+            <div class="w-full flex flex-row gap-3">
+                <button type="button" data-acao="cancelar"
+                class="w-full px-4 py-2 text-sm font-bold rounded-md border border-[#262626] text-[#737373] active:bg-black/10">
+                Cancelar
+                </button>
+                <button type="submit" form="form-create-insumo" data-acao="editar"
+                class="w-full px-4 py-2 text-sm font-bold rounded-md text-white bg-black active:bg-black/80">
+                Editar
+                </button>
+            </div>
+        </div>
+    </div>
+    -->
     
+
+    <footer class="w-full bottom-0 flex flex-row justify-between font-bold text-[#737373] bg-black py-4 px-3 shrink-0">
+        <a href="../index.html" class="flex flex-col items-center">
+            <i class="ri-numbers-line"></i>
+            <p>Dashboard</p>
+        </a>
+        <a href="../vendas/index.html" class="flex flex-col items-center">
+            <i class="ri-receipt-line"></i>
+            <p>Vendas</p>
+        </a>
+        <a href="../produtos/index.html" class="flex flex-col items-center">
+            <i class="ri-shopping-basket-2-fill"></i>
+            <p>Produtos</p>
+        </a>
+        <a href="index.html" class="flex flex-col items-center text-white">
+            <i class="ri-box-3-line"></i>
+            <p>Estoque</p>
+        </a>
+    </footer>
+
+    <script type="module" src="estoque.js"></script>
 </body>
 </html>
