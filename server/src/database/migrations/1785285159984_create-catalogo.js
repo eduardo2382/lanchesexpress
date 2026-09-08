@@ -59,6 +59,8 @@ export const up = (pgm) => {
         nome: {type: 'varchar(100)', notNull: true},
         obrigatorio: {type: 'boolean', default: true},
         tipo_selecao: {type: 'varchar(20)', check: "tipo_selecao IN ('unica', 'multipla')", notNull: true},
+        quantidade_minima: {type: 'integer', check: "obrigatorio = true OR quantidade_minima >= 1", notNull: true},
+        quantidade_maxima: {type: 'integer', notNull: true},
         tipo_preco: {type: 'varchar(20)', check: "tipo_preco IN ('soma', 'nao_aplica')", notNull: true},
         status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     })
