@@ -49,7 +49,6 @@ export const up = (pgm) => {
     pgm.createTable('opcoes', {
         id: 'id',
         nome: {type: 'varchar(100)', notNull: true},
-        tipo: {type: 'varchar(20)', check: "tipo IN ('escolha', 'porcao')", notNull: true},
         status: {type: 'varchar(20)', check: "status IN ('ativo', 'inativo', 'excluido')", notNull: true, default: 'ativo'}
     })
 

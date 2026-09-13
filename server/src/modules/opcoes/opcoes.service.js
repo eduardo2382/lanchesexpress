@@ -15,11 +15,10 @@ exports.existsOpcaoNome = async (nome) => {
 
 exports.createOpcao = async (body) => {
     if(body.nome == undefined) throw new ValidationError('Nome da opcao faltando!', {campo: 'nome', motivo: 'obrigatorio'})
-    if(body.tipo == undefined) throw new ValidationError('Nome da opcao faltando!', {campo: 'nome', motivo: 'obrigatorio'})
 
     if(await this.existsOpcaoNome(body.nome)) throw new ConflictError('Ja existe uma opcao com esse nome!')
 
-    return (await repository.save(body.nome, body.tipo))[0]
+    return (await repository.save(body.nome))[0]
 }
 
 exports.findAllOpcoes = async (query) => {

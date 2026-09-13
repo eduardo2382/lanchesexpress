@@ -1,7 +1,7 @@
 const pool = require('../../database/connection.js')
 
-exports.save = async (nome, tipo) => {
-    let result = await pool.query("INSERT INTO opcoes(nome, tipo) VALUES ($1, $2) RETURNING *", [nome, tipo])
+exports.save = async (nome) => {
+    let result = await pool.query("INSERT INTO opcoes(nome) VALUES ($1) RETURNING *", [nome])
 
     return result.rows
 }
